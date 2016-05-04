@@ -1,0 +1,15 @@
+{% extends 'layout.html' %}
+
+{% block title %}Settings page {% endblock %}
+
+{% block content %}
+yooo
+{% if error_message %} {{ error_message }} {% endif %}
+<form action="{% url 'user:editsettings' %}" method="post" enctype="multipart/form-data">
+{% csrf_token %}
+    {{ form.as_p }}
+<input type="submit" value="Edit" />
+</form>
+{{ user.profileImg.get_absolute_image_url }}
+<img src="/{{ user.profileImg.url }}">
+{% endblock %}

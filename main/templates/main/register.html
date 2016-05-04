@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+
+{% block title %}Register {% endblock %}
+
+{% block content %}
+<p>Hi from register </p>
+<a href="{% url 'main:index' %}">Index</a>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+    <form action="{% url 'main:newuser' %}" method="post">
+    {% csrf_token %}
+        <input type="text" maxlength="50" name="username" placeholder="username"/>
+        <input type="text" maxlength="50" name="password" placeholder="password"/>
+        <input type="text" maxlength="50" name="email" placeholder="email"/>
+    <input type="submit" value="Add" />
+    </form>
+{% endblock %}
