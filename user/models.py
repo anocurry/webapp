@@ -11,10 +11,10 @@ class User(models.Model):
     password = models.CharField(max_length=50)
     email = models.EmailField()
     displayname = models.CharField(max_length=50)
-    description = models.CharField(max_length=200)
+    description = models.CharField(max_length=200, blank=True)
     vis = models.PositiveSmallIntegerField(choices=VIS_CHOICES)
-    profileImg = models.ImageField(upload_to='pic/', default = 'pic/myeh.jpg')
-    bgImg = models.ImageField(upload_to='bg/', default = 'bg/myeh.jpg')  #change to imagefield?
+    profileImg = models.ImageField(upload_to='pic/', default = 'pic/default.jpg')
+    bgImg = models.ImageField(upload_to='bg/', default = 'bg/default.jpg')  #change to imagefield?
     useBg = models.BooleanField()
 
     def __str__(self):
@@ -35,21 +35,22 @@ class Post(models.Model):
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     sitename = models.CharField(max_length=50)
-    siteusername = models.CharField(max_length=50)
-    email = models.EmailField()
-    url = models.URLField()
+    siteusername = models.CharField(max_length=50, blank=True)
+    email = models.EmailField(blank=True)
+    url = models.URLField(blank=True)
     post_date = models.DateTimeField(auto_now=True)
     usage = models.PositiveSmallIntegerField(choices=USAGE_CHOICES)
     category = models.CharField(max_length=50)
-    description = models.CharField(max_length=100)
+    description = models.CharField(max_length=100, blank=True)
     vis = models.PositiveSmallIntegerField(choices=VIS_CHOICES)
-    logo = models.ImageField(upload_to='logo/', default = 'bg/myeh.jpg') #change to imagefield?
+    logo = models.ImageField(upload_to='logo/', default = 'logo/default/pizza.png') #change to imagefield?
 
     def __str__(self):
-        return self.sitename
+        return str(self.id) + ' ' + self.sitename
 
     def was_posted_recently(self):
         return self.post_date >= timezone.now() - datetime.timedelta(days=1)
+
 
 class Notification(models.Model):
     fromuser = models.PositiveIntegerField()
@@ -58,6 +59,16 @@ class Notification(models.Model):
     is_accepted = models.BooleanField(default=False)
     notif_date = models.DateTimeField(auto_now=True)
     message = models.CharField(max_length=100)
+    def __str__(self):
+        return str(self.notif_date)
+
+    def from_username(self):
+        u = User.objects.get(id=self.fromuser)
+        return u.username
+
+    def to_username(self):
+        u = User.objects.get(id=self.touser)
+        return u.username
 
 class Connection(models.Model):
     fromuser = models.PositiveIntegerField()

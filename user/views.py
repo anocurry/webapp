@@ -4,6 +4,9 @@ from django.template import loader
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 
+from django.core.files import File
+import os
+
 from .models import User, Post, Connection, Notification
 from .forms import PostForm, AccountForm
 
@@ -11,22 +14,49 @@ from .forms import PostForm, AccountForm
 # Create your views here.
 def index(request):
     #display the logged in user here
-    uid = request.session.get('login_id')
-    u = User.objects.get(id=uid)
-    form = PostForm(u)
+    u = getLoggedInUser(request)
+    if u is None:
+        #redirect to the main page if the user is not logged in
+        #template = loader.get_template('main/index.html')
+        #return HttpResponse(template.render({}, request))
+        return HttpResponseRedirect(reverse('main:index'))
+    form = PostForm()
+    notifNum = getUnreadNotifNum(request)
     template = loader.get_template('user/index.html')
-    return HttpResponse(template.render({'user': u, 'form': form,}, request))
+    return HttpResponse(template.render({'user': u, 'form': form, 'notifNum': notifNum, 'ownprofile': True}, request))
+
+def newpostform(request):
+    form = PostForm()
+    template = loader.get_template('user/postform.html')
+    return HttpResponse(template.render({'form': form,}, request))
+
+def newpostformid(request, post_id):
+    p = Post.objects.get(id=post_id)
+    form = PostForm(instance=p)
+    template = loader.get_template('user/postform.html')
+    return HttpResponse(template.render({'form': form,}, request))
+
+def getLoggedInUser(request):
+    uid = request.session.get('login_id')
+    try:
+        u = User.objects.get(id=uid)
+    except User.DoesNotExist:
+        return None
+    return u
 
 def search(request, user_id):
     try:
-        u = User.objects.get(id=user_id)
+        searcheduser = User.objects.get(id=user_id)
     except User.DoesNotExist:
         raise Http404("User does not exist")
     template = loader.get_template('user/search.html')
-    ownprofile = False
-    if (u.id==request.session.get('login_id')): #or use int(user_id)
-        ownprofile = True
 
+    u = getLoggedInUser(request)
+    notifNum = getUnreadNotifNum(request)
+    form = PostForm()
+    ownprofile = False
+    if (int(user_id) == request.session.get('login_id')): #or use int(user_id)
+        ownprofile = True
     c = isConnected(request, user_id)
     n = 0
     if c is None:
@@ -35,47 +65,60 @@ def search(request, user_id):
         n = findNotif(request, user_id)
     else:
         connected = True
-    return HttpResponse(template.render({'user': u, 'ownprofile': ownprofile, 'connected': connected, 'notif': n,}, request))
+    return HttpResponse(template.render({'user': u, 'notifNum': notifNum, 'searcheduser': searcheduser, 'ownprofile': ownprofile, 'form': form, 'connected': connected, 'notif': n,}, request))
+
+def searchuser(request):
+    if request.POST['user_name']:
+        searcheduser = User.objects.get(username=request.POST['user_name'])
+        return search(request, searcheduser.id)
 
 def settings(request):
     uid = request.session.get('login_id')
     u = User.objects.get(id=uid)
+    notifNum = getUnreadNotifNum(request)
     form = AccountForm(instance=u)
     template = loader.get_template('user/settings.html')
-    return HttpResponse(template.render({'form': form, 'user': u}, request))
+    return HttpResponse(template.render({'form': form, 'user': u, 'notifNum': notifNum}, request))
 
 def editsettings(request):
     #do checking for password first...
-    uid = request.session.get('login_id')
-    u = User.objects.get(id=uid)
+    u = getLoggedInUser(request)
     form = AccountForm(instance=u)
     if (u.password != request.POST['password']):
         return render(request, 'user/settings.html', {
             'error_message': "Your password was incorrect. Please try again.",
             'form': form,
+            'user': u,
         })
     try:
-        u1 = User.objects.get(~Q(id=uid) & Q(username=u.username) | ~Q(id=uid) & Q(email=u.email))
+        u1 = User.objects.get(~Q(id=u.id) & Q(username=u.username) | ~Q(id=u.id) & Q(email=u.email))
     except User.DoesNotExist:
         #if details do not clash, save the user's new settings...
         form = AccountForm(request.POST, request.FILES)
-        print(form.is_valid())
         if form.is_valid():
+            if (~bool(request.FILES)):
+                pimg = u.profileImg
+                #bgimg = u.bgImg
+            else:
+                pimg = request.FILES['profileImg']
+                #bgImg = request.FILES['bgImg']
             u.username = request.POST['username']
             u.password = request.POST['password']
             u.email = request.POST['email']
             u.displayname = request.POST['displayname']
             u.description = request.POST['description']
             u.vis = request.POST['vis']
-            u.profileImg = request.FILES['profileImg']
-            u.bgImg = request.POST['bgImg']
+            u.profileImg = pimg
+            #u.bgImg = bgimg
             u.useBg = request.POST['useBg']
             u.save()
             return HttpResponseRedirect(reverse('user:settings'))
         else:
+            form = AccountForm(instance=u)
             return render(request, 'user/settings.html', {
                 'error_message': "Some error occurred in editing. Please try again.",
                 'form': form,
+                'user': u,
             })
 
     #otherwise, return with an error message
@@ -84,10 +127,24 @@ def editsettings(request):
         'form': form,
     })
 
+def notifications(request):
+    u = getLoggedInUser(request)
+    notifs = Notification.objects.filter(Q(fromuser=u.id) & Q(is_accepted=True) | Q(touser=u.id))
+    toread = Notification.objects.filter(Q(fromuser=u.id) & Q(is_accepted=True) | Q(touser=u.id) & Q(is_accepted=False))
+    for n in toread:
+        n.is_read = True
+        n.save()
+    notifNum = getUnreadNotifNum(request)
+    template = loader.get_template('user/notifications.html')
+    return HttpResponse(template.render({'user': u, 'notifs': notifs, 'notifNum': notifNum}, request))
+
+def getUnreadNotifNum(request):
+    u = getLoggedInUser(request)
+    num = Notification.objects.filter(touser=u.id, is_accepted=False, is_read=False).count()
+    return num
 
 def newpost(request):
-    uid = request.session.get('login_id')
-    u = User.objects.get(id=uid)
+    u = getLoggedInUser(request)
     if (request.POST['postid'] != ''): #check if the user is editing an existing post
         try:
             p = Post.objects.get(id=request.POST['postid'])
@@ -96,19 +153,39 @@ def newpost(request):
                 'error_message': "This post no longer exists.",
             })
         #get all the form data and edit the post
-        p.sitename = request.POST['sitename']
-        p.siteusername = request.POST['siteusername']
-        p.email = request.POST['email']
-        p.url = request.POST['url']
-        p.usage = request.POST['usage']
-        p.category = request.POST['category']
-        p.description = request.POST['description']
-        p.vis = request.POST['vis']
-        p.logo = request.POST['logo']
-        p.save()
-        return HttpResponseRedirect(reverse('user:index'))
+        form = PostForm(request.POST, request.FILES)
+        path = 'logo/default/' + 'tumblr.png'
+        print(os.path.exists('media/' + path))
+        if form.is_valid():
+            p.sitename = request.POST['sitename']
+            p.siteusername = request.POST['siteusername']
+            p.email = request.POST['email']
+            p.url = request.POST['url']
+            p.usage = request.POST['usage']
+            p.category = request.POST['category']
+            p.description = request.POST['description']
+            p.vis = request.POST['vis']
+            if (bool(request.FILES)):
+                p.logo = request.FILES['logo']
+            p.save()
+            return HttpResponseRedirect(reverse('user:index'))
+        else:
+            return render(request, 'user/index.html', {
+                'error_message': "Something went wrong with editing. Please try again.",
+                'form': form,
+                'ownprofile': True,
+            })
     else: #if not, create a new post and add it
-        p = u.post_set.create(sitename=request.POST['sitename'], siteusername=request.POST['siteusername'], email=request.POST['email'], url=request.POST['url'], usage=request.POST['usage'], category=request.POST['category'], description=request.POST['description'], vis=request.POST['vis'], logo=request.POST['logo'])
+        if bool(request.FILES): #if the user has uploaded a logo
+            l = request.FILES['logo']
+        else:
+            path = 'logo/default/' + request.POST['sitename'] + '.png'
+            if (os.path.exists('media/' + path)): #check if there's a default logo
+                l = path
+            else:
+                l = 'logo/default/pizza.png'
+        print(l)
+        p = u.post_set.create(sitename=request.POST['sitename'], siteusername=request.POST['siteusername'], email=request.POST['email'], url=request.POST['url'], usage=request.POST['usage'], category=request.POST['category'], description=request.POST['description'], vis=request.POST['vis'], logo=l)
         return HttpResponseRedirect(reverse('user:index'))
 
 def newnotif(request, user_id):

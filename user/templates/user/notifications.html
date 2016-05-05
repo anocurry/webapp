@@ -1,0 +1,11 @@
+{% extends 'main/layout.html' %}
+
+{% block title %}Notifications {% endblock %}
+
+{% block content %}
+
+{% for notif in notifs %}
+    {{ notif.from_username }} to {{ notif.to_username }} {{ notif.is_accepted }}
+{% endfor %}
+
+{% endblock %}

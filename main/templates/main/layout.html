@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>{% block title %}{% endblock %}</title>
+  <meta charset="utf-8">
+	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+
+  {% load staticfiles %}
+  <link type="text/css" rel="stylesheet" href="{% static 'animate.css' %}" />
+  <link type="text/css" rel="stylesheet" href="{% static 'stylesheet.css' %}" />
+  <script src="{% static 'jquery.min.js' %}" type="text/javascript"></script>
+
+  {% block js %}{% endblock %}
+  {% block css %}{% endblock %}
+
+</head>
+<body>
+
+
+
+<div class="content">
+
+<div class="header">
+{% if request.session.login_id %}
+  <div class="header-leftbar">
+    <img src="/media/{{ user.profileImg }}" class="profileImg">
+    Hi, <a href="{% url 'user:index' %}">{{ user.username }}</a>
+  </div><div class="header-rightbar">
+  <form action="{% url 'user:searchuser' %}" method="post">
+    {% csrf_token %}
+    <input type="text" name="user_name" placeholder="Search a user..." />
+    <input type="submit" value="Search" />
+  </form>
+  <a href="{% url 'user:notifications' %}">Notifications({{ notifNum }})</a> |
+  <a href="{% url 'user:settings' %}">Settings</a> |
+  <a href="{% url 'user:logout' %}">Logout</a>
+  </div>
+{% else %}
+  You are not logged in. <a href="{% url 'main:register' %}">Register</a> <a href="{% url 'main:login' %}">Login</a>
+{% endif %}
+</div>
+
+<div class="contentbox">
+
+{% block content %}{% endblock %}
+
+</div>
+</div>
+
+</body>
+</html>

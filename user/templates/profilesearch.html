@@ -1,0 +1,32 @@
+<div class="contentboxbg"></div>
+<img src="/media/{{ searcheduser.profileImg }}" class="profileImg" />
+<div class="contentboxdetails">
+  <h1>{{ searcheduser.username }}</h1>
+  {{ searcheduser.description }}
+
+  {% if not ownprofile and request.session.loggedin %}
+    {% if connected %}
+    <p><form action="{% url 'user:disconnect' searcheduser.id %}" method="post">
+      {% csrf_token %}
+      <input type="submit" value="Disconnect" />
+    </form></p>
+    {% else %}
+        {% if notif == 2 %}
+        <p><form action="{% url 'user:newconnect' searcheduser.id %}" method="post">
+          {% csrf_token %}
+          <input type="submit" value="Accept request" />
+        </form></p>
+        {% elif notif == 1 %}
+        <p><form action="{% url 'user:cancelnotif' searcheduser.id %}" method="post">
+          {% csrf_token %}
+          <input type="submit" value="Cancel request" />
+        </form></p>
+        {% else %}
+        <p><form action="{% url 'user:newnotif' searcheduser.id %}" method="post">
+          {% csrf_token %}
+          <input type="submit" value="Connect" />
+        </form></p>
+        {% endif %}
+    {% endif %}
+  {% endif %}
+</div>

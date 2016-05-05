@@ -1,7 +1,15 @@
-{% for post in user.post_set.all %}
-  <li><a href="{% url 'user:search' user.id %}">{{ user.username }}</a></li>
+{% if ownprofile %}
+  <form action="{% url 'user:newpost' %}" method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+      <div id="postform">{{ form.as_p }}</div>
+  <input type="submit" value="Add or edit" />
+  </form>
+{% endif %}
+
+{% for post in searcheduser.post_set.all %}
+  <li><img src="/media/{{ post.logo }}"></li>
   <li><a href="{{ post.url }}">{{ post.sitename }}</a>
-    {% if ownprofile %}<a href="">edit this post</a>{% endif %}
+    {% if ownprofile %}<button class="editpostbutton" id="{{post.id}}">edit this post</button>{% endif %}
     </li>
   <li>Last updated on {{ post.post_date }}</li>
   <li>vis = {{ post.get_vis_display }}</li>
