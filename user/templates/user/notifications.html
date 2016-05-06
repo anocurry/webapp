@@ -5,7 +5,6 @@
 {% block content %}
 <div class="realcontent">
   <h1>Notifications</h1>
-{% if notifs %}
 {% for notif in notifs %}
     <div class="notif">
     {% if notif.fromuser == request.session.login_id %}
@@ -25,10 +24,9 @@
         <br/><span>{{ notif.notif_date }}</span>
     {% endif %}
     </div>
-{% endfor %}
-{% else %}
+{% empty %}
   <p class="message">You do not have any notifications yet.</p>
-{% endif %}
+{% endfor %}
 </div>
 
 {% endblock %}

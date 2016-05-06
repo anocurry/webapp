@@ -79,7 +79,7 @@ a:hover {
   border-radius: 0px 0px 20px 20px;
 	padding: 0px;
 	margin-bottom:20px;
-	min-height:50px;
+	min-height:90px;
 	position:relative;
 	overflow:hidden;
 }
@@ -147,6 +147,16 @@ a:hover {
 .contentboxdetails {
 	margin-left:250px;
 	line-height:1em;
+	min-height:110px;
+}
+
+.contentboxdetails h1 {
+	display:inline-block;
+	margin-right:10px;
+}
+
+.contentboxdetails span {
+	color:#777;
 }
 
 .realcontent {
@@ -156,7 +166,6 @@ a:hover {
 .post {
 	background-color:#e4e4e4;
 	color:#000;
-	line-height:1em;
 	width:210px;
 	padding:5px;
 	margin-right:2px;
@@ -194,7 +203,8 @@ a:hover {
 
 .post-siteusername {
 	font-family: 'Oswald', Georgia, serif;
-	font-size:1em;
+	font-size:1.2em;
+	line-height:1em;
 	font-weight:500;
 }
 
@@ -213,8 +223,8 @@ a .post-siteusername:hover {
 
 .post p {
 	clear:both;
-	font-size:0.7em;
-	line-height:1em;
+	font-size:0.8em;
+	margin-top:2px;
 }
 
 .post .bottom {
@@ -227,11 +237,14 @@ a .post-siteusername:hover {
 .post .editpostbutton {
 	border:0px;
 	background-color:transparent;
+	padding:0px;
+	/*
 	background: url('/media/icon/editbutton.png');
 	background-size: 15px 15px;
 	background-repeat:no-repeat;
 	width: 15px;
 	height: 15px;
+	*/
 }
 
 .post .editpostbutton:hover, .postformheader #closebutton:hover {
@@ -240,8 +253,8 @@ a .post-siteusername:hover {
 
 .postform {
 	position:relative;
-	top:50px;
 	width:60%;
+	top:20px;
 	background-color: #fff;
 	border-radius: 20px;
 	z-index:10;
@@ -293,6 +306,13 @@ th {
 	font-family: 'Oxygen', calibri, sans-serif;
 }
 
+#theform select, .styledform select {
+	border:0px;
+}
+
+#theform option, .styledform option {
+}
+
 .styledform input {
 	padding:10px;
 	font-size:1em;
@@ -318,6 +338,10 @@ th {
 	color:#000;
 }
 
+.connectbutton span {
+	color:#000;
+}
+
 .orange {
 	background-color:orange;
 }
@@ -330,9 +354,18 @@ th {
 	background-color:#50d4d9;
 }
 
+.white-search {
+	padding:0px;
+	color:#fff;
+}
+
 .connectbutton:hover {
 	cursor:pointer;
 	background-color:#50d4d9;
+	color:#fff;
+}
+
+.connectbutton:hover span{
 	color:#fff;
 }
 

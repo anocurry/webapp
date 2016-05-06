@@ -3,65 +3,11 @@
 {% block title %}test title {% endblock %}
 
 {% if user %}
-    {% block js %}
-    <script type="text/javascript">
-	   $(document).ready(function() {
-       //hide the post id at the start
-       $('#id_postid').parent().parent().hide();
-       //$('.postform').addClass('animated bounceIn');
-
-        $('.editpostbutton').click(function() {
-          //alert("clicked " + $(this).attr('id'));
-          postid = $(this).attr('id');
-          $.ajax({
-              url: postid + '/newpostform',
-              type: 'get',
-              success: function(data) {
-                  //alert(data);
-                  $('#theform').html(data);
-                  $('#id_postid').val(postid);
-                  $('.postformheader h1').html("Edit account information");
-                  $('#id_postid').parent().parent().hide();
-                  $('#overlay').fadeIn(500);
-              },
-              failure: function(data) {
-                  alert('Got an error dude');
-              }
-          });
-        });
-        $('#newpostbutton').click(function() {
-          $.ajax({
-              url: 'newpostform',
-              type: 'get',
-              success: function(data) {
-                  //alert(data);
-                  $('#theform').html(data);
-                  $('#id_postid').val('');
-                  $('#id_postid').parent().parent().hide();
-                  $('#overlay').fadeIn(500);
-              },
-              failure: function(data) {
-                  alert('Got an error dude');
-              }
-          });
-        });
-
-        $('#closebutton').click(function() {
-          $('#overlay').fadeOut(500);
-        })
-      });
-
-    </script>
-    {% endblock %}
 
     {% block css %}
-    <style>
-    .contentboxbg {
-      width:100%;
-    	height:200px;
-      background:url('/media/{{ user.bgImg }}') no-repeat fixed center;
-    }
-    </style>
+    {% with searcheduser=user %}
+    {% include 'profilecss.html' %}
+    {% endwith %}
     {% endblock %}
 {% endif %}
 
@@ -71,6 +17,7 @@
   {% if user %}
     {% with searcheduser=user %}
     {% include 'profiledetails.html '%}
+    </div>
     {% endwith %}
     <div class="realcontent">
       {% if error_message %}<p class="error-message">{{ error_message }}</p>{% endif %}

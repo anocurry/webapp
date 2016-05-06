@@ -2,28 +2,26 @@
 
 {% block title %}{{ searcheduser.username }}'s profile {% endblock %}
 
+{% if ownprofile %}
 {% block outsidecontent %}{% include 'postlistform.html' %}{% endblock %}
+{% endif %}
 
 {% block css %}
-  <style>
-  .contentboxbg {
-    width:100%;
-    height:200px;
-    background:url('/media/{{ searcheduser.bgImg }}') no-repeat fixed center;
-  }
-  </style>
+  {% include 'profilecss.html' %}
 {% endblock %}
 
 {% block content %}
 
-  {% if user %}
     {% include 'profilesearch.html '%}
 
     <div class="realcontent">
-    {% include 'postlist.html' %}
+    {% if not request.session.loggedin and searcheduser.vis == 0 %}
+        This user's account is private.
+    {% elif not connected and searcheduser.vis == 0 %}
+        This user's account is only visible to connected users.
+    {% else %}
+      {% include 'postlist.html' %}
+    {% endif %}
     </div>
-  {% else %}
-    <p>In search</p>
-  {% endif %}
 
 {% endblock %}

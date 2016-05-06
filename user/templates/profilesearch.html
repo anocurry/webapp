@@ -1,30 +1,26 @@
-<div class="contentboxbg"></div>
-<img src="/media/{{ searcheduser.profileImg }}" class="profileImg" />
-<div class="contentboxdetails">
-  <h1>{{ searcheduser.username }}</h1>
-  {{ searcheduser.description }}
+{% include 'profiledetails.html '%}
 
   {% if not ownprofile and request.session.loggedin %}
     {% if connected %}
     <p><form action="{% url 'user:disconnect' searcheduser.id %}" method="post">
       {% csrf_token %}
-      <button type="submit" class="connectbutton green"><i class="fa fa-check"></i>Connected (Disconnect)</button>
+      <button type="submit" class="connectbutton green" id="connectedbutton"><i class="fa fa-check" aria-hidden="true"></i><span> Connected (Disconnect)</span></button>
     </form></p>
     {% else %}
         {% if notif == 2 %}
         <p><form action="{% url 'user:newconnect' searcheduser.id %}" method="post">
           {% csrf_token %}
-          <button type="submit" class="connectbutton orange"><i class="fa fa-check"></i> Accept request</button>
+          <button type="submit" class="connectbutton orange"><i class="fa fa-check" aria-hidden="true"></i> Accept request</button>
         </form></p>
         {% elif notif == 1 %}
         <p><form action="{% url 'user:cancelnotif' searcheduser.id %}" method="post">
           {% csrf_token %}
-          <button type="submit" class="connectbutton green"><i class="fa fa-check"></i> Request sent (cancel request)</button>
+          <button type="submit" class="connectbutton green" id="requestsentbutton"><i class="fa fa-check" aria-hidden="true"></i> Request sent (cancel request)</button>
         </form></p>
         {% else %}
         <p><form action="{% url 'user:newnotif' searcheduser.id %}" method="post">
           {% csrf_token %}
-          <button type="submit" class="connectbutton orange"><i class="fa fa-plus"></i> Connect</button>
+          <button type="submit" class="connectbutton orange"><i class="fa fa-plus" aria-hidden="true"></i> Connect</button>
         </form></p>
         {% endif %}
     {% endif %}

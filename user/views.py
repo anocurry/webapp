@@ -69,8 +69,8 @@ def search(request, user_id):
     return HttpResponse(template.render({'user': u, 'notifNum': notifNum, 'searcheduser': searcheduser, 'ownprofile': ownprofile, 'form': form, 'connected': connected, 'notif': n,}, request))
 
 def searchuser(request):
-    if request.POST['user_name']:
-        searcheduser = User.objects.get(username=request.POST['user_name'])
+    if request.GET['user_name']:
+        searcheduser = User.objects.get(username=request.GET['user_name'])
         return search(request, searcheduser.id)
 
 def settings(request):
@@ -91,12 +91,14 @@ def customize(request):
 def editsettings(request):
     #do checking for password first...
     u = getLoggedInUser(request)
+    notifNum = getUnreadNotifNum(request)
     form = AccountForm(instance=u)
     if (u.password != request.POST['password']):
         return render(request, 'user/settings.html', {
             'error_message': "Your password was incorrect. Please try again.",
             'form': form,
             'user': u,
+            'notifNum': notifNum,
         })
     try:
         u1 = User.objects.get(~Q(id=u.id) & Q(username=u.username) | ~Q(id=u.id) & Q(email=u.email))
@@ -126,12 +128,15 @@ def editsettings(request):
                 'error_message': "Some error occurred in editing. Please try again.",
                 'form': form,
                 'user': u,
+                'notifNum': notifNum,
             })
 
     #otherwise, return with an error message
     return render(request, 'user/settings.html', {
         'error_message': "The username or email is already in use. Please try again.",
         'form': form,
+        'user': u,
+        'notifNum': notifNum,
     })
 
 def editprofileimg(request):

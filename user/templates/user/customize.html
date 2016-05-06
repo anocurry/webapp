@@ -3,13 +3,9 @@
 {% block title %}Settings page {% endblock %}
 
 {% block css %}
-<style>
-.contentboxbg {
-  width:100%;
-  height:200px;
-  background:url('/media/{{ user.bgImg }}') no-repeat fixed center;
-}
-</style>
+    {% with searcheduser=user %}
+    {% include 'profilecss.html' %}
+    {% endwith %}
 {% endblock %}
 
 {% block content %}
@@ -19,7 +15,7 @@
     <input type="file" name="bgImg" class="bgimginput"/>
     <button type="submit">SUBMIT THE BG</button>
   </form>
-  
+
 <div class="realcontent">
   <form action="{% url 'user:editprofileimg' %}" method="post" enctype="multipart/form-data">
   {% csrf_token %}

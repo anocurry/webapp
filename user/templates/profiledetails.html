@@ -1,6 +1,5 @@
 <div class="contentboxbg"></div>
 <img src="/media/{{ searcheduser.profileImg }}" class="profileImg" />
 <div class="contentboxdetails">
-  <h1>{{ searcheduser.username }}</h1>
-  {{ searcheduser.description }}
-</div>
+  <h1>{{ searcheduser.displayname }}</h1><span>@{{ searcheduser.username }}</span>
+  <br/>{{ searcheduser.description }}
