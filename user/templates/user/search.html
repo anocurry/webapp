@@ -1,6 +1,18 @@
 {% extends 'main/layout.html' %}
 
-{% block title %}{{ user.username }}'s profile {% endblock %}
+{% block title %}{{ searcheduser.username }}'s profile {% endblock %}
+
+{% block outsidecontent %}{% include 'postlistform.html' %}{% endblock %}
+
+{% block css %}
+  <style>
+  .contentboxbg {
+    width:100%;
+    height:200px;
+    background:url('/media/{{ searcheduser.bgImg }}') no-repeat fixed center;
+  }
+  </style>
+{% endblock %}
 
 {% block content %}
 
@@ -8,7 +20,6 @@
     {% include 'profilesearch.html '%}
 
     <div class="realcontent">
-
     {% include 'postlist.html' %}
     </div>
   {% else %}

@@ -5,12 +5,19 @@ from django.core.urlresolvers import reverse
 from django.db.models import Q
 
 from user.models import User
+import user
 
 
 # Create your views here.
 def index(request):
     template = loader.get_template('main/index.html')
-    return HttpResponse(template.render({}, request))
+    try:
+        u = user.views.getLoggedInUser(request)
+    except User.DoesNotExist:
+        return HttpResponse(template.render({}, request))
+    notifNum = user.views.getUnreadNotifNum(request)
+    return HttpResponse(template.render({'user': u, 'notifNum': notifNum}, request))
+
 
 def register(request):
     template = loader.get_template('main/register.html')
@@ -21,12 +28,12 @@ def newuser(request):
         #check if there's a user with same username or email
         u = User.objects.get(Q(username=request.POST['username']) | Q(email=request.POST['email']))
     except (User.DoesNotExist): #if there is not... create a new user
-        newuser = User(username=request.POST['username'], password=request.POST['password'], email=request.POST['email'], displayname=request.POST['username'], description="default description", vis=1, profileImg="testimg", bgImg="testBg", useBg=False)
+        newuser = User(username=request.POST['username'], password=request.POST['password'], email=request.POST['email'], displayname=request.POST['username'], description="default description", vis=1, profileImg="pic/default.png", bgImg="bg/default.jpg", useBg=False)
         newuser.save()
         return HttpResponseRedirect(reverse('main:login')) #... and redirect to login page
     #otherwise, redirect back to registration page with an error message
     return render(request, 'main/register.html', {
-        'error_message': "The username or email has already been used. Would you like to login?",
+        'error_message': "The username or email is already in use. Please try again.",
     })
 
 def login(request):

@@ -8,23 +8,23 @@
     {% if connected %}
     <p><form action="{% url 'user:disconnect' searcheduser.id %}" method="post">
       {% csrf_token %}
-      <input type="submit" value="Disconnect" />
+      <button type="submit" class="connectbutton green"><i class="fa fa-check"></i>Connected (Disconnect)</button>
     </form></p>
     {% else %}
         {% if notif == 2 %}
         <p><form action="{% url 'user:newconnect' searcheduser.id %}" method="post">
           {% csrf_token %}
-          <input type="submit" value="Accept request" />
+          <button type="submit" class="connectbutton orange"><i class="fa fa-check"></i> Accept request</button>
         </form></p>
         {% elif notif == 1 %}
         <p><form action="{% url 'user:cancelnotif' searcheduser.id %}" method="post">
           {% csrf_token %}
-          <input type="submit" value="Cancel request" />
+          <button type="submit" class="connectbutton green"><i class="fa fa-check"></i> Request sent (cancel request)</button>
         </form></p>
         {% else %}
         <p><form action="{% url 'user:newnotif' searcheduser.id %}" method="post">
           {% csrf_token %}
-          <input type="submit" value="Connect" />
+          <button type="submit" class="connectbutton orange"><i class="fa fa-plus"></i> Connect</button>
         </form></p>
         {% endif %}
     {% endif %}

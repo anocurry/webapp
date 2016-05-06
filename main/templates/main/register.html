@@ -3,15 +3,23 @@
 {% block title %}Register {% endblock %}
 
 {% block content %}
-<p>Hi from register </p>
-<a href="{% url 'main:index' %}">Index</a>
+<div class="realcontent">
+  <p>Hi from register </p>
+  <a href="{% url 'main:index' %}">Index</a>
 
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+  {% if error_message %}<p class="error-message">{{ error_message }}</p>{% endif %}
     <form action="{% url 'main:newuser' %}" method="post">
     {% csrf_token %}
+    <div class="styledform">
+    <table><tr><th><label>Username: </label></th><td>
         <input type="text" maxlength="50" name="username" placeholder="username"/>
+      </td><tr><tr><th><label>Password: </label></th><td>
         <input type="text" maxlength="50" name="password" placeholder="password"/>
+      </td><tr><tr><th><label>Email: </label></th><td>
         <input type="text" maxlength="50" name="email" placeholder="email"/>
-    <input type="submit" value="Add" />
+      </td></tr></table>
+    </div>
+    <center><button type="submit" class="submitbutton"><span class="buttonleftfont">Register</span> <i class="fa fa-chevron-circle-right fa-2x"></i></button></center>
     </form>
+  </div>
 {% endblock %}

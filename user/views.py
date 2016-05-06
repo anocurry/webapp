@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import loader
 from django.core.urlresolvers import reverse
 from django.db.models import Q
+import datetime
 
 from django.core.files import File
 import os
@@ -80,6 +81,13 @@ def settings(request):
     template = loader.get_template('user/settings.html')
     return HttpResponse(template.render({'form': form, 'user': u, 'notifNum': notifNum}, request))
 
+def customize(request):
+    uid = request.session.get('login_id')
+    u = User.objects.get(id=uid)
+    notifNum = getUnreadNotifNum(request)
+    template = loader.get_template('user/customize.html')
+    return HttpResponse(template.render({'user': u, 'notifNum': notifNum}, request))
+
 def editsettings(request):
     #do checking for password first...
     u = getLoggedInUser(request)
@@ -110,7 +118,6 @@ def editsettings(request):
             u.vis = request.POST['vis']
             u.profileImg = pimg
             #u.bgImg = bgimg
-            u.useBg = request.POST['useBg']
             u.save()
             return HttpResponseRedirect(reverse('user:settings'))
         else:
@@ -127,6 +134,31 @@ def editsettings(request):
         'form': form,
     })
 
+def editprofileimg(request):
+    u = getLoggedInUser(request)
+    if (bool(request.FILES)):
+        pimg = request.FILES['profileImg']
+        u.profileImg = pimg
+        u.save()
+        return HttpResponseRedirect(reverse('user:customize'))
+    #if failed, return to user's customize page
+    return render(request, 'user/customize.html', {
+        'error_message': "Something went wrong. Please try again.",
+    })
+
+def editbgimg(request):
+    u = getLoggedInUser(request)
+    if (bool(request.FILES)):
+        bgimg = request.FILES['bgImg']
+        u.bgImg = bgimg
+        u.save()
+        return HttpResponseRedirect(reverse('user:customize'))
+    #if failed, return to user's customize page
+    return render(request, 'user/customize.html', {
+        'error_message': "Something went wrong. Please try again.",
+    })
+
+
 def notifications(request):
     u = getLoggedInUser(request)
     notifs = Notification.objects.filter(Q(fromuser=u.id) & Q(is_accepted=True) | Q(touser=u.id))
@@ -140,8 +172,9 @@ def notifications(request):
 
 def getUnreadNotifNum(request):
     u = getLoggedInUser(request)
-    num = Notification.objects.filter(touser=u.id, is_accepted=False, is_read=False).count()
-    return num
+    if u:
+        num = Notification.objects.filter(Q(fromuser=u.id) & Q(is_accepted=True) & Q(is_read=False) |  Q(touser=u.id) & Q(is_accepted=False) & Q(is_read=False)).count()
+        return num
 
 def newpost(request):
     u = getLoggedInUser(request)
@@ -198,7 +231,7 @@ def newnotif(request, user_id):
 def cancelnotif(request, user_id):
     uid = request.session.get('login_id')
     try:
-        n=Notification.objects.get(fromuser=uid, touser=user_id, is_accepted=False)
+        n=Notification.objects.filter(fromuser=uid, touser=user_id, is_accepted=False).latest('notif_date')
     except Notification.DoesNotExist:
         return HttpResponseRedirect(reverse('user:search', args=(user_id,)))
     n.delete()
@@ -211,11 +244,12 @@ def newconnect(request, user_id):
         c=Connection(fromuser=uid, touser=user_id)
         c.save()
         try:
-            n=Notification.objects.get(fromuser=user_id, touser=uid, message='test')
+            n=Notification.objects.filter(fromuser=user_id, touser=uid, message='test').latest('notif_date')
         except Notification.DoesNotExist:
             return HttpResponseRedirect(reverse('user:search', args=(user_id,)))
         n.is_accepted = True
         n.is_read = False
+        n.notif_date = datetime.datetime.now()
         n.save()
     return HttpResponseRedirect(reverse('user:search', args=(user_id,)))
 

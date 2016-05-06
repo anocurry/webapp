@@ -3,13 +3,15 @@
 {% block title %}Settings page {% endblock %}
 
 {% block content %}
-yooo
-{% if error_message %} {{ error_message }} {% endif %}
+<div class="realcontent">
+<h1>Settings</h1>
+<p><a href="{% url 'user:customize' %}">Click here</a> to customize your profile picture and header image.</p>
+{% if error_message %} <p class="error-message">{{ error_message }}</p>{% endif %}
 <form action="{% url 'user:editsettings' %}" method="post" enctype="multipart/form-data">
 {% csrf_token %}
-    {{ form.as_p }}
-<input type="submit" value="Edit" />
+    <div class="styledform"><table>{{ form.as_table }}</table></div>
+    <br />
+    <center><button class="fa fa-check-circle fa-3x submitbutton" type="submit"></button></center>
 </form>
-{{ user.profileImg.get_absolute_image_url }}
-<img src="/{{ user.profileImg.url }}">
+</div>
 {% endblock %}

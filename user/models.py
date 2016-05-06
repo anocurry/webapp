@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+import datetime
 
 # Create your models here.
 class User(models.Model):
@@ -51,13 +52,15 @@ class Post(models.Model):
     def was_posted_recently(self):
         return self.post_date >= timezone.now() - datetime.timedelta(days=1)
 
+    def has_url(self):
+        return bool(self.url)
 
 class Notification(models.Model):
     fromuser = models.PositiveIntegerField()
     touser = models.PositiveIntegerField()
     is_read = models.BooleanField(default=False)
     is_accepted = models.BooleanField(default=False)
-    notif_date = models.DateTimeField(auto_now=True)
+    notif_date = models.DateTimeField(default=datetime.datetime.now())
     message = models.CharField(max_length=100)
     def __str__(self):
         return str(self.notif_date)
@@ -69,6 +72,14 @@ class Notification(models.Model):
     def to_username(self):
         u = User.objects.get(id=self.touser)
         return u.username
+
+    def from_user_profileimg(self):
+        u = User.objects.get(id=self.fromuser)
+        return u.profileImg
+
+    def to_user_profileimg(self):
+        u = User.objects.get(id=self.touser)
+        return u.profileImg
 
 class Connection(models.Model):
     fromuser = models.PositiveIntegerField()

@@ -5,7 +5,7 @@ from .models import User, Post
 
 #VERY IMPORTANT
 #http://stackoverflow.com/questions/2010747/empty-request-files-with-django-upload-forms
-
+"""
 class PostForm_2(forms.Form):
     postid = forms.CharField(max_length=100)
     sitename = forms.CharField(max_length=50)
@@ -17,16 +17,19 @@ class PostForm_2(forms.Form):
     description = forms.CharField(max_length=100)
     vis = forms.CharField(max_length=50)
     logo = forms.ImageField()
+"""
 
 class PostForm(ModelForm):
     postid = forms.CharField(max_length=100)
     class Meta:
         model = Post
-        fields = ['sitename', 'siteusername', 'email', 'url', 'usage', 'category', 'description', 'vis', 'logo']
+        fields = ['sitename', 'siteusername', 'email', 'url', 'category', 'description', 'usage', 'vis', 'logo']
         labels = {
+            'sitename': 'Site name',
+            'siteusername': 'Username',
             'vis' : 'Visibility',
         }
-
+"""
 class AccountForm_2(forms.Form):
     username = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'value': 'your username'}))
     password = forms.CharField(max_length=50)
@@ -37,12 +40,13 @@ class AccountForm_2(forms.Form):
     profileImg = forms.ImageField() #change to imagefield?
     bgImg = forms.CharField(max_length=200)   #change to imagefield?
     useBg = forms.CharField(max_length=50)
-
+"""
 class AccountForm(ModelForm):
     password = forms.CharField(max_length=50)
     class Meta:
         model = User
         fields = ['username', 'email', 'displayname', 'description', 'vis', 'profileImg', 'bgImg', 'useBg']
+        exclude = ['profileImg', 'bgImg', 'useBg']
         labels = {
             'vis' : 'Visibility',
             'profileImg' : 'Profile image',

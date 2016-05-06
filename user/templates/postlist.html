@@ -1,16 +1,21 @@
-{% if ownprofile %}
-  <form action="{% url 'user:newpost' %}" method="post" enctype="multipart/form-data">
-  {% csrf_token %}
-      <div id="postform">{{ form.as_p }}</div>
-  <input type="submit" value="Add or edit" />
-  </form>
-{% endif %}
-
 {% for post in searcheduser.post_set.all %}
-  <li><img src="/media/{{ post.logo }}"></li>
-  <li><a href="{{ post.url }}">{{ post.sitename }}</a>
-    {% if ownprofile %}<button class="editpostbutton" id="{{post.id}}">edit this post</button>{% endif %}
-    </li>
-  <li>Last updated on {{ post.post_date }}</li>
-  <li>vis = {{ post.get_vis_display }}</li>
+  <div class="post">
+    <div class="post-img">
+      <img src="/media/{{ post.logo }}">
+    </div><div class="post-text">
+      {% if post.has_url %}<a href="{{ post.url }}">{% endif %}
+        <span class="post-floatleft post-siteusername">{{ post.siteusername }}</span>
+      {% if post.has_url %}</a>{% endif %}
+      <span class="post-floatright post-sitename">{{ post.sitename }}</span>
+      <p>{{ post.description }}<br />
+      {{ post.get_vis_display }}</p>
+    </div>
+    <div class="bottom">
+    {% if ownprofile %}<button class="editpostbutton" id="{{post.id}}"></button>{% endif %}
+    </div>
+  </div>
 {% endfor %}
+
+{% if ownprofile %}
+<center><button class="submitbutton" id="newpostbutton"><span class="buttonleftfont">Add a new account</span> <i class="fa fa-plus-circle fa-2x"></i></button></center>
+{% endif %}

@@ -1,0 +1,15 @@
+{% if ownprofile %}
+<div id="overlay">
+  <div class="overlay-black"></div>
+  <div class="postform">
+      <div class="postformheader"><h1>Add account information</h1>
+        <button id="closebutton">Close</button>
+      </div>
+      <form action="{% url 'user:newpost' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div id="theform"><table id="postform">{{ form.as_table }}</table></div>
+        <center><button class="fa fa-check-circle fa-3x submitbutton" type="submit"></button></center>
+      </form>
+  </div>
+</div>
+{% endif %}

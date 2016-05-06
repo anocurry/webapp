@@ -6,22 +6,49 @@
     {% block js %}
     <script type="text/javascript">
 	   $(document).ready(function() {
+       //hide the post id at the start
+       $('#id_postid').parent().parent().hide();
+       //$('.postform').addClass('animated bounceIn');
+
         $('.editpostbutton').click(function() {
-          alert("clicked " + $(this).attr('id'));
+          //alert("clicked " + $(this).attr('id'));
           postid = $(this).attr('id');
           $.ajax({
               url: postid + '/newpostform',
               type: 'get',
               success: function(data) {
-                  alert(data);
-                  $('#postform').html(data);
+                  //alert(data);
+                  $('#theform').html(data);
                   $('#id_postid').val(postid);
+                  $('.postformheader h1').html("Edit account information");
+                  $('#id_postid').parent().parent().hide();
+                  $('#overlay').fadeIn(500);
               },
               failure: function(data) {
                   alert('Got an error dude');
               }
           });
         });
+        $('#newpostbutton').click(function() {
+          $.ajax({
+              url: 'newpostform',
+              type: 'get',
+              success: function(data) {
+                  //alert(data);
+                  $('#theform').html(data);
+                  $('#id_postid').val('');
+                  $('#id_postid').parent().parent().hide();
+                  $('#overlay').fadeIn(500);
+              },
+              failure: function(data) {
+                  alert('Got an error dude');
+              }
+          });
+        });
+
+        $('#closebutton').click(function() {
+          $('#overlay').fadeOut(500);
+        })
       });
 
     </script>
@@ -38,14 +65,15 @@
     {% endblock %}
 {% endif %}
 
+{% block outsidecontent %}{% include 'postlistform.html' %}{% endblock %}
+
 {% block content %}
   {% if user %}
     {% with searcheduser=user %}
     {% include 'profiledetails.html '%}
     {% endwith %}
     <div class="realcontent">
-      {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-
+      {% if error_message %}<p class="error-message">{{ error_message }}</p>{% endif %}
       {% with searcheduser=user %}
       {% include 'postlist.html' %}
       {% endwith %}

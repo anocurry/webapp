@@ -3,13 +3,20 @@
 {% block title %}Login {% endblock %}
 
 {% block content %}
-<p>Hi from login </p>
-<a href="{% url 'main:index' %}">Index</a>
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-    <form action="{% url 'main:loginauth' %}" method="post">
-    {% csrf_token %}
-        <input type="text" maxlength="50" name="username" placeholder="username or email"/>
-        <input type="text" maxlength="50" name="password" placeholder="password"/>
-    <input type="submit" value="Add" />
-    </form>
+<div class="realcontent">
+  <p>Hi from login </p>
+  <a href="{% url 'main:index' %}">Index</a>
+  {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+      <form action="{% url 'main:loginauth' %}" method="post">
+      {% csrf_token %}
+      <div class="styledform">
+      <table><tr><th><label>Username: </label></th><td>
+          <input type="text" maxlength="50" name="username" placeholder="username or email"/>
+        </td><tr><tr><th><label>Password: </label></th><td>
+          <input type="text" maxlength="50" name="password" placeholder="password"/>
+        </td></tr></table>
+      </div>
+      <center><button type="submit" class="submitbutton"><span class="buttonleftfont">Login</span> <i class="fa fa-chevron-circle-right fa-2x"></i></button></center>
+      </form>
+  </div>
 {% endblock %}
