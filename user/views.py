@@ -16,15 +16,44 @@ from .forms import PostForm, AccountForm
 def index(request):
     #display the logged in user here
     u = getLoggedInUser(request)
+    posts = getSortedUserPosts(u.id, True, True)
     if u is None:
         #redirect to the main page if the user is not logged in
-        #template = loader.get_template('main/index.html')
-        #return HttpResponse(template.render({}, request))
         return HttpResponseRedirect(reverse('main:index'))
     form = PostForm()
     notifNum = getUnreadNotifNum(request)
     template = loader.get_template('user/index.html')
-    return HttpResponse(template.render({'user': u, 'form': form, 'notifNum': notifNum, 'ownprofile': True}, request))
+    return HttpResponse(template.render({'user': u, 'form': form, 'notifNum': notifNum, 'ownprofile': True, 'posts': posts}, request))
+
+def getSortedUserPosts(user_id, ownprofile, connected):
+    try:
+        u = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return None
+    if ownprofile: #if user is viewing their own profile, return all posts...
+        mostUsed = Post.objects.filter(user_id=u.id, usage=3)
+        moderatelyUsed = Post.objects.filter(user_id=u.id, usage=2)
+        leastUsed = Post.objects.filter(user_id=u.id, usage=1)
+        onHiatus = Post.objects.filter(user_id=u.id, usage=0)
+    elif connected: #else if users are connected, return posts which are not private...
+        mostUsed = Post.objects.filter(Q(user_id=u.id) &  Q(usage=3) & ~Q(vis=0))
+        moderatelyUsed = Post.objects.filter(Q(user_id=u.id) &  Q(usage=2) & ~Q(vis=0))
+        leastUsed = Post.objects.filter(Q(user_id=u.id) &  Q(usage=1) & ~Q(vis=0))
+        onHiatus = Post.objects.filter(Q(user_id=u.id) &  Q(usage=0) & ~Q(vis=0))
+    else: #if user is not viewing their own profile and they're not connected, return only public posts...
+        mostUsed = Post.objects.filter(user_id=u.id, usage=3, vis=2)
+        moderatelyUsed = Post.objects.filter(user_id=u.id, usage=2, vis=2)
+        leastUsed = Post.objects.filter(user_id=u.id, usage=1, vis=2)
+        onHiatus = Post.objects.filter(user_id=u.id, usage=0, vis=2)
+
+    posts = {
+        'mostUsed': mostUsed,
+        'moderatelyUsed' : moderatelyUsed,
+        'leastUsed': leastUsed,
+        'onHiatus': onHiatus,
+    }
+    print(posts)
+    return posts
 
 def newpostform(request):
     form = PostForm()
@@ -54,6 +83,7 @@ def search(request, user_id):
 
     u = getLoggedInUser(request)
     notifNum = getUnreadNotifNum(request)
+
     form = PostForm()
     ownprofile = False
     if (int(user_id) == request.session.get('login_id')): #or use int(user_id)
@@ -66,7 +96,9 @@ def search(request, user_id):
         n = findNotif(request, user_id)
     else:
         connected = True
-    return HttpResponse(template.render({'user': u, 'notifNum': notifNum, 'searcheduser': searcheduser, 'ownprofile': ownprofile, 'form': form, 'connected': connected, 'notif': n,}, request))
+
+    posts = getSortedUserPosts(user_id, ownprofile, connected)
+    return HttpResponse(template.render({'user': u, 'notifNum': notifNum, 'searcheduser': searcheduser, 'ownprofile': ownprofile, 'form': form, 'connected': connected, 'notif': n, 'posts': posts, }, request))
 
 def searchuser(request):
     if request.GET['user_name']:
@@ -106,7 +138,7 @@ def editsettings(request):
         #if details do not clash, save the user's new settings...
         form = AccountForm(request.POST, request.FILES)
         if form.is_valid():
-            if (~bool(request.FILES)):
+            if (not bool(request.FILES)):
                 pimg = u.profileImg
                 #bgimg = u.bgImg
             else:
@@ -183,12 +215,18 @@ def getUnreadNotifNum(request):
 
 def newpost(request):
     u = getLoggedInUser(request)
+    posts = getSortedUserPosts(u.id, True, True)
+    notifNum = getUnreadNotifNum(request)
     if (request.POST['postid'] != ''): #check if the user is editing an existing post
         try:
             p = Post.objects.get(id=request.POST['postid'])
         except Post.DoesNotExist:
             return render(request, 'user/index.html', {
                 'error_message': "This post no longer exists.",
+                'user': u,
+                'notifNum': notifNum,
+                'ownprofile': True,
+                'posts': posts,
             })
         #get all the form data and edit the post
         form = PostForm(request.POST, request.FILES)
@@ -200,7 +238,7 @@ def newpost(request):
             p.email = request.POST['email']
             p.url = request.POST['url']
             p.usage = request.POST['usage']
-            p.category = request.POST['category']
+            #p.category = request.POST['category']
             p.description = request.POST['description']
             p.vis = request.POST['vis']
             if (bool(request.FILES)):
@@ -211,19 +249,45 @@ def newpost(request):
             return render(request, 'user/index.html', {
                 'error_message': "Something went wrong with editing. Please try again.",
                 'form': form,
+                'user': u,
+                'notifNum': notifNum,
                 'ownprofile': True,
+                'posts': posts,
             })
     else: #if not, create a new post and add it
-        if bool(request.FILES): #if the user has uploaded a logo
-            l = request.FILES['logo']
-        else:
-            path = 'logo/default/' + request.POST['sitename'] + '.png'
-            if (os.path.exists('media/' + path)): #check if there's a default logo
-                l = path
+        form = PostForm(request.POST, request.FILES)
+        print(bool(request.POST['vis']))
+        if (bool(request.POST['sitename']) and bool(request.POST['usage']) and bool(request.POST['vis'])):
+            if bool(request.FILES): #if the user has uploaded a logo
+                l = request.FILES['logo']
             else:
-                l = 'logo/default/pizza.png'
-        print(l)
-        p = u.post_set.create(sitename=request.POST['sitename'], siteusername=request.POST['siteusername'], email=request.POST['email'], url=request.POST['url'], usage=request.POST['usage'], category=request.POST['category'], description=request.POST['description'], vis=request.POST['vis'], logo=l)
+                path = 'logo/default/' + request.POST['sitename'] + '.png'
+                if (os.path.exists('media/' + path)): #check if there's a default logo
+                    l = path
+                else:
+                    l = 'logo/default/pizza.png'
+            print(l)
+            p = u.post_set.create(sitename=request.POST['sitename'], siteusername=request.POST['siteusername'], email=request.POST['email'], url=request.POST['url'], usage=request.POST['usage'], description=request.POST['description'], vis=request.POST['vis'], logo=l)
+            return HttpResponseRedirect(reverse('user:index'))
+        else:
+            return render(request, 'user/index.html', {
+                'error_message': "Some errors occurred while adding. Please try again.",
+                'form': form,
+                'user': u,
+                'notifNum': notifNum,
+                'ownprofile': True,
+                'posts': posts,
+            })
+
+def deletepost(request):
+    if request.POST['deletepostid']:
+        try:
+            p = Post.objects.get(id=request.POST['deletepostid'])
+        except Post.DoesNotExist:
+            return render(request, 'user/index.html', {
+                'error_message': "This post no longer exists.",
+            })
+        p.delete()
         return HttpResponseRedirect(reverse('user:index'))
 
 def newnotif(request, user_id):
@@ -241,6 +305,36 @@ def cancelnotif(request, user_id):
         return HttpResponseRedirect(reverse('user:search', args=(user_id,)))
     n.delete()
     return HttpResponseRedirect(reverse('user:search', args=(user_id,)))
+
+def connections(request):
+    u = getLoggedInUser(request)
+    notifNum = getUnreadNotifNum(request)
+    template = loader.get_template('user/connections.html')
+
+    connections = Connection.objects.filter(Q(fromuser=u.id) | Q(touser=u.id)) #find if the user is connected with anyone
+    if (not bool(connections)): #if there is none, just return the page...
+        return HttpResponse(template.render({'user': u, 'notifNum': notifNum}, request))
+    #otherwise, get them conected users
+    connectedusers = []
+    for c in connections:
+        if (c.fromuser == u.id):
+            connected_u = User.objects.get(id=c.touser)
+        else:
+            connected_u = User.objects.get(id=c.fromuser)
+        connected_u_posts = connected_u.post_set.all()
+        count = connected_u_posts.count()
+        sameposts = []
+        for p in connected_u_posts:
+            posts = Post.objects.filter(user_id=u.id, sitename=p.sitename)
+            for i in posts:
+                sameposts.append(i)
+        connectedusers.append({
+            'connecteduser': connected_u,
+            'connecteduser_postcount': count,
+            'connecteduser_sameposts': sameposts,
+        })
+    print(connectedusers)
+    return HttpResponse(template.render({'user': u, 'notifNum': notifNum, 'connectedusers': connectedusers}, request))
 
 def newconnect(request, user_id):
     uid = request.session.get('login_id')

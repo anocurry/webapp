@@ -4,9 +4,8 @@
 
 {% block content %}
 <div class="realcontent">
-  <p>Hi from login </p>
-  <a href="{% url 'main:index' %}">Index</a>
-  {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+  <h1>Login</h1>
+  {% if error_message %}<p class="error-message">{{ error_message }}</p>{% endif %}
       <form action="{% url 'main:loginauth' %}" method="post">
       {% csrf_token %}
       <div class="styledform">

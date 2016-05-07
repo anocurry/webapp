@@ -24,6 +24,7 @@ class PostForm(ModelForm):
     class Meta:
         model = Post
         fields = ['sitename', 'siteusername', 'email', 'url', 'category', 'description', 'usage', 'vis', 'logo']
+        exclude = ['category']
         labels = {
             'sitename': 'Site name',
             'siteusername': 'Username',

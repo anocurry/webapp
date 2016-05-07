@@ -1,0 +1,38 @@
+{% if forloop.first %}<section><h2>{{ post.get_usage_display }}</h2>{% endif %}
+<div class="postborder">
+<div class="post">
+  <div class="post-img">
+    <img src="/media/{{ post.logo }}">
+  </div><div class="post-text">
+    <div class="post-text-header">
+    {% if post.has_url %}<a href="{{ post.url }}">{% endif %}
+      <span class="post-floatleft post-siteusername">{{ post.siteusername }} </span>
+    {% if post.has_url %}</a>{% endif %}
+    <span class="post-sitename">{% if post.siteusername %} | {% endif %}{{ post.sitename }}</span>
+    </div>
+    <p>{{ post.description }}<br/></p>
+  </div>
+  {% if ownprofile %}
+    <div class="bottom">
+    <form action="{% url 'user:deletepost' %}" method="post" class="deletepostform" enctype="multipart/form-data">
+      {% csrf_token %}
+      <input name="deletepostid" type="text" value="{{post.id}}" class="hidden"/>
+      <button class="fa fa-times deletepostbutton"></button>
+    </form><button class="fa fa-pencil editpostbutton" id="{{post.id}}"></button>
+    </div>
+  {% endif %}
+</div>
+{% if ownprofile %}
+    <span class="post-floatleft post-bottomtext">{{ post.email }}</span>
+    {% if post.vis == 0 %}
+    <div class="post-floatright post-bottomright">
+      <span class="post-bottomright-text transparent">{{ post.get_vis_display }}</span><i class="fa fa-lock"></i>
+    </div>
+    {% elif post.vis == 1 %}
+    <div class="post-floatright post-bottomright">
+      <span class="post-bottomright-text transparent">{{ post.get_vis_display }}</span><i class="fa fa-unlock-alt"></i>
+    </div>
+    {% endif %}
+{% endif %}
+</div>
+{% if forloop.last %}</section>{% endif %}

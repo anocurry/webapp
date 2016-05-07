@@ -4,9 +4,7 @@
 
 {% block content %}
 <div class="realcontent">
-  <p>Hi from register </p>
-  <a href="{% url 'main:index' %}">Index</a>
-
+  <h1>Register</h1>
   {% if error_message %}<p class="error-message">{{ error_message }}</p>{% endif %}
     <form action="{% url 'main:newuser' %}" method="post">
     {% csrf_token %}

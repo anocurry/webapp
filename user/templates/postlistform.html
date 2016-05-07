@@ -1,10 +1,13 @@
 {% if ownprofile %}
-<div id="overlay" class="hidden">
+{% if error_message %}<div id="overlay">
+{% else %}<div id="overlay" class="hidden">
+{% endif %}
   <div class="overlay-black"></div>
   <div class="postform">
       <div class="postformheader"><h1>Add account information</h1>
         <button id="closebutton">Close</button>
       </div>
+      {% if error_message %}<p class="error-message">{{ error_message }}</p>{% endif %}
       <form action="{% url 'user:newpost' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div id="theform"><table id="postform">{{ form.as_table }}</table></div>

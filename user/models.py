@@ -41,7 +41,7 @@ class Post(models.Model):
     url = models.URLField(blank=True)
     post_date = models.DateTimeField(auto_now=True)
     usage = models.PositiveSmallIntegerField(choices=USAGE_CHOICES)
-    category = models.CharField(max_length=50)
+    category = models.CharField(max_length=50, blank=True)
     description = models.CharField(max_length=100, blank=True)
     vis = models.PositiveSmallIntegerField(choices=VIS_CHOICES)
     logo = models.ImageField(upload_to='logo/', default = 'logo/default/pizza.png') #change to imagefield?

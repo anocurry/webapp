@@ -20,7 +20,6 @@
     </div>
     {% endwith %}
     <div class="realcontent">
-      {% if error_message %}<p class="error-message">{{ error_message }}</p>{% endif %}
       {% with searcheduser=user %}
       {% include 'postlist.html' %}
       {% endwith %}

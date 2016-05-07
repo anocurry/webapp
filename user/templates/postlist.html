@@ -1,28 +1,21 @@
-{% cycle 1,2,3,4 as cyclevis silent %}
-{% for c in cyclevis %}
-yo: ~{{ c }}~
+{% if posts.mostUsed or posts.moderatelyUsed or posts.leastUsed or posts.onHiatus %}
+{% for post in posts.mostUsed %}
+  {% include 'postdetails.html' %}
 {% endfor %}
-{% for post in searcheduser.post_set.all %}
-  {% if forloop.first %}<h1>{{ post.get_vis_display }}</h1>{% endif %}
-  <div class="post">
-    <div class="post-img">
-      <img src="/media/{{ post.logo }}">
-    </div><div class="post-text">
-      {% if post.has_url %}<a href="{{ post.url }}">{% endif %}
-        <span class="post-floatleft post-siteusername">{{ post.siteusername }}</span>
-      {% if post.has_url %}</a>{% endif %}
-      <span class="post-floatright post-sitename">{{ post.sitename }}</span>
-      <p>{{ post.description }}<br/></p>
-    </div>
-    <div class="bottom">
-    {% if ownprofile %}<button class="fa fa-pencil editpostbutton" id="{{post.id}}"></button>{% endif %}
-    </div>
-  </div>
-{% empty %}
+{% for post in posts.moderatelyUsed %}
+  {% include 'postdetails.html' %}
+{% endfor %}
+{% for post in posts.leastUsed %}
+  {% include 'postdetails.html' %}
+{% endfor %}
+{% for post in posts.onHiatus %}
+  {% include 'postdetails.html' %}
+{% endfor %}
+{% else %}
   {% if ownprofile %}You have not added any accounts yet.
   {% else %}This user has not added any accounts yet.
   {% endif %}
-{% endfor %}
+{% endif %}
 
 {% if ownprofile %}
 <center><button class="submitbutton" id="newpostbutton"><span class="buttonleftfont">Add a new account</span> <i class="fa fa-plus-circle fa-2x"></i></button></center>

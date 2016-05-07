@@ -1,0 +1,26 @@
+{% extends 'main/layout.html' %}
+
+{% block title %}Notifications {% endblock %}
+
+{% block content %}
+<div class="realcontent">
+  <h1>Connections</h1>
+
+{% for c in connectedusers %}
+  <div class="connection">
+    <center><img src="/media/{{ c.connecteduser.profileImg }}" class="connectionimg"/></center>
+    <a href="{% url 'user:search' c.connecteduser.id %}"><h2>{{ c.connecteduser.username }}</h2></a>
+    <br/><span>{{ c.connecteduser_postcount }} accounts</span>
+    <p>Both of you share accounts on:
+    <br/>
+    {% for p in c.connecteduser_sameposts %}
+      {% if p.has_url %}<a href="{{ p.url }}">{% endif %}
+        <img src="/media/{{ p.logo }}" class="connectionlogo"/>
+      {% if p.has_url %}</a>{% endif %}
+    {% empty %}
+      EMPTYY
+    {% endfor %}
+    </p>
+  </div>
+{% endfor %}
+{% endblock %}
