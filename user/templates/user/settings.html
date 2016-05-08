@@ -1,10 +1,12 @@
 {% extends 'main/layout.html' %}
 
-{% block title %}Settings page {% endblock %}
+{% block title %}Settings {% endblock %}
 
 {% block content %}
 <div class="realcontent">
 <h1>Settings</h1>
+Please enter your old password in order to edit your settings.
+<br/>Changing your account visibility to private will automatically make all your information only visible to connected users and yourself.
 <p><a href="{% url 'user:customize' %}">Click here</a> to customize your profile picture and header image.</p>
 <p><a href="{% url 'user:connections' %}">Click here</a> to view your connections</p>
 {% if error_message %} <p class="error-message">{{ error_message }}</p>{% endif %}
@@ -12,7 +14,7 @@
 {% csrf_token %}
     <div class="styledform"><table>{{ form.as_table }}</table></div>
     <br />
-    <center><button class="fa fa-check-circle fa-3x submitbutton" type="submit"></button></center>
+    <center><button class="fa fa-check-circle fa-3x submitbutton hvr-grow" type="submit"></button></center>
 </form>
 </div>
 {% endblock %}

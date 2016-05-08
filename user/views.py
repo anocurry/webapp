@@ -136,22 +136,15 @@ def editsettings(request):
         u1 = User.objects.get(~Q(id=u.id) & Q(username=u.username) | ~Q(id=u.id) & Q(email=u.email))
     except User.DoesNotExist:
         #if details do not clash, save the user's new settings...
-        form = AccountForm(request.POST, request.FILES)
+        form = AccountForm(request.POST)
         if form.is_valid():
-            if (not bool(request.FILES)):
-                pimg = u.profileImg
-                #bgimg = u.bgImg
-            else:
-                pimg = request.FILES['profileImg']
-                #bgImg = request.FILES['bgImg']
             u.username = request.POST['username']
-            u.password = request.POST['password']
             u.email = request.POST['email']
             u.displayname = request.POST['displayname']
             u.description = request.POST['description']
             u.vis = request.POST['vis']
-            u.profileImg = pimg
-            #u.bgImg = bgimg
+            if (bool(request.POST['new_password'])):
+                u.password = request.POST['new_password']
             u.save()
             return HttpResponseRedirect(reverse('user:settings'))
         else:
@@ -198,7 +191,7 @@ def editbgimg(request):
 
 def notifications(request):
     u = getLoggedInUser(request)
-    notifs = Notification.objects.filter(Q(fromuser=u.id) & Q(is_accepted=True) | Q(touser=u.id))
+    notifs = Notification.objects.filter(Q(fromuser=u.id) & Q(is_accepted=True) | Q(touser=u.id)).order_by('-notif_date')
     toread = Notification.objects.filter(Q(fromuser=u.id) & Q(is_accepted=True) | Q(touser=u.id) & Q(is_accepted=False))
     for n in toread:
         n.is_read = True
@@ -321,11 +314,12 @@ def connections(request):
             connected_u = User.objects.get(id=c.touser)
         else:
             connected_u = User.objects.get(id=c.fromuser)
-        connected_u_posts = connected_u.post_set.all()
+        u_posts = u.post_set.all() #get logged in user's all posts
+        connected_u_posts = Post.objects.filter(Q(user_id=connected_u.id) & ~Q(vis=0))
         count = connected_u_posts.count()
         sameposts = []
-        for p in connected_u_posts:
-            posts = Post.objects.filter(user_id=u.id, sitename=p.sitename)
+        for p in u_posts:
+            posts = Post.objects.filter(Q(user_id=connected_u.id) & Q(sitename=p.sitename) & ~Q(vis=0))
             for i in posts:
                 sameposts.append(i)
         connectedusers.append({

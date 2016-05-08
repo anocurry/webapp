@@ -11,7 +11,7 @@
       <form action="{% url 'user:newpost' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div id="theform"><table id="postform">{{ form.as_table }}</table></div>
-        <center><button class="fa fa-check-circle fa-3x submitbutton" type="submit"></button></center>
+        <center><button class="fa fa-check-circle fa-3x submitbutton hvr-grow" type="submit"></button></center>
       </form>
   </div>
 </div>

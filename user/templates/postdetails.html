@@ -2,7 +2,7 @@
 <div class="postborder">
 <div class="post">
   <div class="post-img">
-    <img src="/media/{{ post.logo }}">
+    <img src="/media/{{ post.logo }}" class="hvr-grow">
   </div><div class="post-text">
     <div class="post-text-header">
     {% if post.has_url %}<a href="{{ post.url }}">{% endif %}
@@ -17,8 +17,8 @@
     <form action="{% url 'user:deletepost' %}" method="post" class="deletepostform" enctype="multipart/form-data">
       {% csrf_token %}
       <input name="deletepostid" type="text" value="{{post.id}}" class="hidden"/>
-      <button class="fa fa-times deletepostbutton"></button>
-    </form><button class="fa fa-pencil editpostbutton" id="{{post.id}}"></button>
+      <button class="fa fa-times deletepostbutton hvr-grow"></button>
+    </form><button class="fa fa-pencil editpostbutton hvr-grow" id="{{post.id}}"></button>
     </div>
   {% endif %}
 </div>

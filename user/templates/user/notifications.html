@@ -5,6 +5,8 @@
 {% block content %}
 <div class="realcontent">
   <h1>Notifications</h1>
+  Notifications will appear in your inbox when a user sends you a connection request, or when a user has acceted your connection request.
+  <br/><br/>
 {% for notif in notifs %}
     <div class="notif">
     {% if notif.fromuser == request.session.login_id %}

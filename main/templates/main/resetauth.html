@@ -1,0 +1,17 @@
+{% extends 'main/layoutmain.html' %}
+
+{% block title %}Reset password {% endblock %}
+
+{% block content %}
+<div class="realcontent">
+  <h1>Reset password</h1>
+  {% if error_message %}<p class="error-message">{{ error_message }}</p>{% endif %}
+  <form action="{% url 'main:resetauthprocess' user.id %}" method="post">
+  {% csrf_token %}
+  <div class="styledform">
+  <table>{{ form.as_table }}</table>
+  </div>
+  <center><button type="submit" class="submitbutton hvr-grow"><span class="buttonleftfont oswald-font">Change your password</span> <i class="fa fa-chevron-circle-right fa-2x"></i></center>
+  </form>
+</div>
+{% endblock %}

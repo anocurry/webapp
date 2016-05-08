@@ -1,6 +1,6 @@
 {% extends 'main/layout.html' %}
 
-{% block title %}Settings page {% endblock %}
+{% block title %}Customization {% endblock %}
 
 {% block css %}
     {% with searcheduser=user %}
@@ -14,26 +14,27 @@
   {% csrf_token %}
     <input type="file" name="bgImg" class="bgimginput" id="bgimginput"/>
     <i class="fa fa-pencil fa-2x bgimginputicon" aria-hidden="true"></i>
-    <button id="bgimginputbutton" class="connectbutton orange transparent" type="submit">Save background</button>
+    <button id="bgimginputbutton" class="connectbutton orange transparent hover-green" type="submit">Save background</button>
   </form>
   </div>
 </div>
-
-<div class="realcontent">
-  <img src="/media/{{ user.profileImg }}" class="profileImg" id="contentprofileimg"/>
-  <form action="{% url 'user:editprofileimg' %}" method="post" enctype="multipart/form-data">
+  <form action="{% url 'user:editprofileimg' %}" method="post" enctype="multipart/form-data" id="profileimgform">
   {% csrf_token %}
     <div class="profileimgouterdiv">
+      <img src="/media/{{ user.profileImg }}" id="contentprofileimg"/>
       <div class="profileimginputdiv profileimgrounded">
         <input type="file" name="profileImg" class="profileimginput profileimgrounded" id="profileimginput"/>
         <i class="fa fa-pencil fa-2x profileimginputicon" aria-hidden="true"></i>
       </div>
     </div>
     <div class="contentboxdetails">
-      <button class="connectbutton orange transparent" id="profileimginputbutton" type="submit">Save profile image</button>
+      <button class="connectbutton orange transparent hover-green" id="profileimginputbutton" type="submit">Save profile image</button>
     </div>
   </form>
-  <br/>
-  Insert text here
+
+<div class="realcontent">
+  <h1>Customization</h1>
+  Hover over your header or profile images to change them.
+  <br/>The maximum upload size is 300KB for profile image and 1.5MB for header image.
 </div>
 {% endblock %}

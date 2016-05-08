@@ -1,21 +1,22 @@
-{% extends 'main/layout.html' %}
+{% extends 'main/layoutmain.html' %}
 
 {% block title %}Login {% endblock %}
 
 {% block content %}
 <div class="realcontent">
-  <h1>Login</h1>
+  <h1>{% if request.session.loggedin %}You're already logged in{% else %}Login{% endif %}</h1>
   {% if error_message %}<p class="error-message">{{ error_message }}</p>{% endif %}
+  {% if request.session.loggedin %}
+  {% include 'main/loggedinbox.html' %}
+  {% else %}
       <form action="{% url 'main:loginauth' %}" method="post">
       {% csrf_token %}
       <div class="styledform">
-      <table><tr><th><label>Username: </label></th><td>
-          <input type="text" maxlength="50" name="username" placeholder="username or email"/>
-        </td><tr><tr><th><label>Password: </label></th><td>
-          <input type="text" maxlength="50" name="password" placeholder="password"/>
-        </td></tr></table>
+      <table>{{ form.as_table }}</table>
       </div>
-      <center><button type="submit" class="submitbutton"><span class="buttonleftfont">Login</span> <i class="fa fa-chevron-circle-right fa-2x"></i></button></center>
+      <center><button type="submit" class="submitbutton hvr-grow"><span class="buttonleftfont oswald-font">Login</span> <i class="fa fa-chevron-circle-right fa-2x"></i></button>
+      <p><a href="{% url 'main:reset' %}">Forgot your password?</a></p></center>
       </form>
+  {% endif %}
   </div>
 {% endblock %}

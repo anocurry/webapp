@@ -1,10 +1,38 @@
-{% extends 'main/layout.html' %}
+{% extends 'main/layoutmain.html' %}
 
-{% block title %}test title {% endblock %}
+{% block title %}Main page {% endblock %}
 
 {% block content %}
 <div class="realcontent">
-  <p>Hi</p>
-  <a href="{% url 'main:register' %}">Register</a>
+  {% if request.session.loggedin %}
+  {% include 'main/loggedinbox.html' %}
+  {% else %}
+  <div class="mainbox logoutbox">
+    <p><a href="{% url 'main:register' %}" class="hvr-bob">Register <i class="fa fa-chevron-circle-right fa-1x" aria-hidden="true"></i></a>
+      <br/>
+      or
+      <br/>
+      <a href="{% url 'main:login' %}" class="hvr-bob">Login <i class="fa fa-chevron-circle-right fa-1x" aria-hidden="true"></i></a></p>
+  </div>
+  {% endif %}
+
+  <div class="wow fadeInUp mainbox">
+    <i class="fa fa-asterisk fa-4x fa-border orange-text leftbox" aria-hidden="true"></i>
+    <h1 class="title">Link your accounts to one place</h1>
+    <p>Have your many online accounts accessible from one single page.
+    </p>
+  </div>
+
+  <div class="wow fadeInUp mainbox">
+    <i class="fa fa-info-circle fa-4x fa-border orange-text leftbox" aria-hidden="true"></i>
+    <h1 class="title">Include your details</h1>
+    <p>Include your account credentials and descriptions to let others know where to find you.</p>
+  </div>
+
+  <div class="wow fadeInUp mainbox">
+    <i class="fa fa-users fa-4x fa-border orange-text leftbox" aria-hidden="true"></i>
+    <h1 class="title">Connect with others</h1>
+    <p>Connect with your peers. Present your information differently to strangers, to your friends and to yourself.</p>
+  </div>
 </div>
 {% endblock %}

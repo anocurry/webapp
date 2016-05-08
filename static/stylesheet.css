@@ -57,6 +57,9 @@ a:hover {
 	overflow:hidden;
 }
 
+.header .headertitle {
+}
+
 .header a:hover {
 	color:#fff;
 }
@@ -134,6 +137,76 @@ a:hover {
 
 .realcontent {
 	padding: 30px 50px;
+}
+
+.realcontent .title {
+	font-size:2.5em;
+	line-height:1em;
+	color:#777;
+}
+
+.realcontent .mainbox {
+	text-align:center;
+	display:block;
+	margin-bottom:80px;
+	padding-bottom:20px;
+	border-bottom:1px solid #777;
+}
+
+.realcontent .leftbox {
+	vertical-align: middle;
+}
+
+.loggedinbox {
+	border-radius:20px;
+	background-color:#e4e4e4;
+	width:100%;
+	position:relative;
+	min-height:230px;
+	padding:30px 50px;
+	line-height:1em;
+	margin-bottom:50px;
+}
+
+.loggedinbox img {
+	float:left;
+	vertical-align: middle;
+	border: 4px solid #fff;
+	border-radius:100%;
+	margin-right:10px;
+	height:170px;
+	width:170px;
+}
+
+.loggedinbox h1 {
+	font-family: 'Oswald', Georgia, serif;
+	color:#000;
+	display:inline-block;
+}
+
+.loggedinbox p a {
+	font-family: 'Oswald', Georgia, serif;
+	font-size:1.5em;
+	color:orange;
+}
+
+.loggedinbox p a:hover {
+	font-size:1.5em;
+	color:#000;
+}
+
+.logoutbox a {
+	text-align:center;
+	font-family: 'Oswald', Georgia, serif;
+	font-size:2em;
+}
+
+.grey-text {
+	color:#777;
+}
+
+.orange-text {
+	color:orange;
 }
 
 .realcontent h1 {
@@ -256,7 +329,6 @@ a .post-siteusername:hover {
 	right:2px;
 	bottom:2px;
 	position:absolute;
-	opacity:0.3;
 }
 
 .bottom form {
@@ -265,6 +337,7 @@ a .post-siteusername:hover {
 }
 
 .post .editpostbutton, .post .deletepostbutton {
+	opacity:0.3;
 	border:0px;
 	background-color:transparent;
 	padding:0px;
@@ -279,6 +352,10 @@ a .post-siteusername:hover {
 
 .post .editpostbutton:hover, .post .deletepostbutton:hover, .postformheader #closebutton:hover {
 	cursor:pointer;
+}
+
+.post .editpostbutton:hover, .post .deletepostbutton:hover {
+	opacity:0.5;
 }
 
 .postform {
@@ -313,6 +390,7 @@ a .post-siteusername:hover {
 	font-size:1em;
 	background:transparent;
 	color:#ddd;
+	text-decoration:underline;
 }
 
 .postform form {
@@ -377,8 +455,12 @@ th {
 	background-color:orange;
 }
 
-.red {
-	background-color:red;
+.hover-red:hover {
+	background-color:#EA3C53;
+}
+
+.hover-green:hover {
+	background-color:#50d4d9;
 }
 
 .green {
@@ -392,7 +474,6 @@ th {
 
 .connectbutton:hover {
 	cursor:pointer;
-	background-color:#50d4d9;
 	color:#fff;
 }
 
@@ -458,7 +539,7 @@ th {
 }
 
 .buttonleftfont {
-	font-size:1.5em;
+	font-size:2em;
 	margin-right:5px;
 	margin-top:10px;
 }
@@ -476,7 +557,7 @@ th {
 }
 
 .contentboxbgoverlay {
-	opacity:0.5;
+	transition: background-color 0.5s ease;
 	width:100%;
 	height:200px;
 }
@@ -504,13 +585,24 @@ th {
 }
 
 .profileimgouterdiv {
+	height:170px;
+	width:170px;
 	position:absolute;
 	top:240px;
 	margin-left:50px;
 }
 
+.profileimgouterdiv img {
+	border: 6px solid #fff;
+	border-radius:100%;
+	height:170px;
+	width:170px;
+	position:absolute;
+}
+
 .profileimginputdiv {
-	border: 4px solid #fff;
+	transition: background-color 0.5s ease;
+	border: 6px solid #fff;
 	position:relative;
 	text-align:center;
 	line-height:170px;
@@ -531,6 +623,10 @@ th {
 	opacity:0;
 	z-index:9;
 	margin-bottom:0px;
+}
+
+#profileimginputbutton {
+	margin-top:20px;
 }
 
 .oxygen-font {
@@ -568,6 +664,15 @@ th {
 	display:inline-block;
 }
 
+.notif a {
+	color:orange;
+	font-weight:700;
+}
+
+.notif a:hover{
+	color:#50d4d9;
+}
+
 .connection {
 	border-radius:20px;
 	background-color:#e4e4e4;
@@ -579,6 +684,9 @@ th {
 	line-height:1em;
 	text-align:center;
 	margin-bottom:10px;
+	display:inline-block;
+	margin:5px;
+	vertical-align: text-top;
 }
 
 .connection .connectionimg {
@@ -590,7 +698,7 @@ th {
 }
 
 .connection h2 {
-	font-size:1.2em;
+	font-size:1.5em;
 	line-height: 1em;
 	margin:0px;
 	color:orange;
@@ -606,6 +714,10 @@ th {
 	width:30px;
 }
 
+.connection p {
+	font-size:0.8em;
+}
+
 /******* MEDIA QUERIES ******/
 @media screen and (max-width:900px) {
 	.content {
@@ -614,6 +726,23 @@ th {
 		margin-right:auto;
 		padding: 0px 10px;
 	}
+
+	.realcontent {
+		padding:20px 20px;
+	}
+
+	.postform {
+		width:80%;
+	}
+
+	.postlist {
+		margin-top:20px;
+	}
+
+	.connection {
+		width:30%;
+	}
+
 }
 
 @media screen and (max-width:600px) {
@@ -639,5 +768,83 @@ th {
 	.header-rightbar {
 		position:relative;
 		text-align:left;
+	}
+
+	.contentbox {
+		text-align:center;
+	}
+
+	.contentbox .profileImg, .profileimgouterdiv {
+		margin:0px;
+		position:relative;
+		top:-80px;
+	}
+
+	.profileimgouterdiv {
+		display:inline-block;
+	}
+
+	#profileimgform {
+		width:100%;
+		height:50px;
+		padding:0px;
+		text-align:center;
+	}
+
+	.profileimgouterdiv img {
+		margin:0px;
+		position:relative;
+	}
+
+	.profileimginputdiv {
+		top:0px;
+		left:0px;
+		position:absolute;
+	}
+
+	#profileimginputbutton {
+		margin-top:10px;
+	}
+
+	.contentboxdetails {
+		position:relative;
+		top:-80px;
+		display:block;
+		margin:0px;
+		line-height:1em;
+		min-height:0px;
+	}
+
+	.contentboxdetails h1 {
+		line-height:1em;
+		display:inline-block;
+		margin:0px;
+	}
+
+	.contentboxdetails span {
+		margin-left:10px;
+		color:#777;
+	}
+
+	.realcontent {
+		position:relative;
+		text-align:left;
+	}
+
+	.postlist {
+		position:relative;
+		top:-80px;
+	}
+
+	.postform {
+		width:90%;
+	}
+
+	.connection {
+		min-width:170px;
+	}
+
+	.connectiondiv {
+		text-align:center;
 	}
 }

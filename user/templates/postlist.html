@@ -1,3 +1,4 @@
+<div class="postlist">
 {% if posts.mostUsed or posts.moderatelyUsed or posts.leastUsed or posts.onHiatus %}
 {% for post in posts.mostUsed %}
   {% include 'postdetails.html' %}
@@ -18,5 +19,6 @@
 {% endif %}
 
 {% if ownprofile %}
-<center><button class="submitbutton" id="newpostbutton"><span class="buttonleftfont">Add a new account</span> <i class="fa fa-plus-circle fa-2x"></i></button></center>
+<center><button class="submitbutton hvr-grow" id="newpostbutton"><span class="buttonleftfont oswald-font">Add a new account</span> <i class="fa fa-plus-circle fa-2x"></i></button></center>
 {% endif %}
+</div>

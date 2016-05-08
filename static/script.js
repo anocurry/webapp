@@ -1,5 +1,7 @@
 $(document).ready(function() {
-  //hide the post id at the start
+
+  //Initialization
+  new WOW().init();
   $('#id_postid').parent().parent().hide();
 
   function animationHover(element, animation) {
@@ -43,6 +45,8 @@ $(document).ready(function() {
              $('.postformheader h1').html("Edit account information");
              $('#id_postid').parent().parent().hide();
              $('#overlay').fadeIn(500);
+             $('.postform').removeClass('animated bounceOut');
+             $('.postform').addClass('animated bounceIn');
          },
          failure: function(data) {
              alert('Got an error dude');
@@ -61,6 +65,8 @@ $(document).ready(function() {
              $('.postformheader h1').html("Add account information");
              $('#id_postid').parent().parent().hide();
              $('#overlay').fadeIn(500);
+             $('.postform').removeClass('animated bounceOut');
+             $('.postform').addClass('animated bounceIn');
          },
          failure: function(data) {
              alert('Got an error dude');
@@ -70,6 +76,9 @@ $(document).ready(function() {
 
    $('#closebutton').click(function() {
      $('#overlay').fadeOut(500);
+     $('.error-message').hide();
+     $('.postform').removeClass('animated bounceIn');
+     $('.postform').addClass('animated bounceOut');
    })
 
    $('.deletepostbutton').click(function() {
@@ -82,16 +91,44 @@ $(document).ready(function() {
    });
 
    //animationHover('#connectedbutton', 'bounceIn');
+   $('#connectedbutton').mouseenter(function() {
+     var t = $(this);
+     var i = t.find('i');
+     i.removeClass('fa-check');
+     i.addClass('fa-times');
+     t.find('span').html(' Disconnect');
+   })
+
+   $('#connectedbutton').mouseleave(function() {
+     var t = $(this);
+     var i = t.find('i');
+     i.removeClass('fa-times');
+     i.addClass('fa-check');
+     t.find('span').html(' Connected');
+   })
+
+   $('#requestsentbutton').mouseenter(function() {
+     var t = $(this);
+     var i = t.find('i');
+     i.removeClass('fa-check');
+     i.addClass('fa-times');
+     t.find('span').html(' Cancel request');
+   })
+
+   $('#requestsentbutton').mouseleave(function() {
+     var t = $(this);
+     var i = t.find('i');
+     i.removeClass('fa-times');
+     i.addClass('fa-check');
+     t.find('span').html(' Request sent');
+   })
 
     $('.post-bottomright').mouseenter(function() {
         $(this).find('span').removeClass('transparent');
-        $(this).find('span').removeClass('animated bounceOut');
-        $(this).find('span').addClass('animated bounceIn');
     });
 
     $('.post-bottomright').mouseleave(function() {
-        $(this).find('span').removeClass('animated bounceIn');
-        $(this).find('span').addClass('animated bounceOut');
+        $(this).find('span').addClass('transparent');
     });
 
     $('#bgimginput').change(function() {
@@ -109,6 +146,7 @@ $(document).ready(function() {
               $('.contentboxbg').attr('style', 'background:url("'+this.src+'") no-repeat fixed center;');
               $('#bgimginput').css('opacity', '0');
               $('#bgimginputbutton').removeClass('transparent');
+              $('#bgimginputbutton').addClass('animated bounceIn');
             };
             image.onerror= function() {
               alert('Invalid file type: '+ F.type);
@@ -133,6 +171,7 @@ $(document).ready(function() {
               $('#contentprofileimg').attr('src', this.src);
               $('#profileimginput').css('opacity', '0');
               $('#profileimginputbutton').removeClass('transparent');
+              $('#profileimginputbutton').addClass('animated bounceIn');
             };
             image.onerror= function() {
               alert('Invalid file type: '+ F.type);
