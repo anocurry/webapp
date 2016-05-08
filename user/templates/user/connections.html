@@ -17,13 +17,15 @@
     <p>Both of you have accounts on:
     <br/><br/>
     {% for p in c.connecteduser_sameposts %}
-      {% if p.has_url %}<a href="{{ p.url }}" class="hvr-grow">{% endif %}
-        <img src="/media/{{ p.logo }}" class="connectionlogo"/>
+      {% if p.has_url %}<a href="{{ p.url }}">{% endif %}
+        <img src="/media/{{ p.logo }}" class="connectionlogo hvr-grow"/>
       {% if p.has_url %}</a>{% endif %}
     {% endfor %}
     </p>
     {% endif %}
   </div>
+{% empty %}
+  <p class="message">You are not connected with any users yet.</p>
 {% endfor %}
 </div>
 {% endblock %}

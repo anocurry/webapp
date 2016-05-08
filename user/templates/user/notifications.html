@@ -15,7 +15,7 @@
             You are now connected with <a href="{% url 'user:search' notif.touser %}">{{ notif.to_username }}</a>
         {{ notif.display_from_self }}
         {% endif %}
-        <br/><span>{{ notif.notif_date }}</span>
+        <br/><span><i class="fa fa-calendar" aria-hidden="true"></i> {{ notif.notif_date }}</span>
     {% else %}
     <img src="/media/{{ notif.from_user_profileimg }}" />
         {% if notif.is_accepted %}
@@ -23,7 +23,7 @@
         {% else %}
             <a href="{% url 'user:search' notif.fromuser %}">{{ notif.from_username }}</a> has sent you a connection request.
         {% endif %}
-        <br/><span>{{ notif.notif_date }}</span>
+        <br/><span><i class="fa fa-calendar" aria-hidden="true"></i> {{ notif.notif_date }}</span>
     {% endif %}
     </div>
 {% empty %}

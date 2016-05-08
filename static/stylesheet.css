@@ -60,6 +60,18 @@ a:hover {
 .header .headertitle {
 }
 
+.header-links {
+	font-size:0.9em;
+}
+
+.link-margin-right {
+	margin-right:10px;
+}
+
+.link-margin-left {
+	margin-left:10px;
+}
+
 .header a:hover {
 	color:#fff;
 }
@@ -75,6 +87,13 @@ a:hover {
 	margin-right:10px;
 	height:50px;
 	width:50px;
+	float:left;
+}
+
+.header-leftbar .greeting {
+	font-size:1.5em;
+	line-height:1em;
+	font-family: 'Oswald', Georgia, serif;
 }
 
 .header-rightbar {
@@ -95,11 +114,11 @@ a:hover {
 	font-family: 'Oxygen', calibri, sans-serif;
 	background-color:transparent;
 	border:none;
-	border-bottom:2px solid #d4d6d8;
+	border-bottom:1px solid #d4d6d8;
 }
 
 .header-rightbar form input[type="text"]:focus{
-	border-bottom:2px solid #50d4d9;
+	border-bottom:1px solid #50d4d9;
 }
 
 .contentbox {
@@ -124,6 +143,7 @@ a:hover {
 	margin-left:250px;
 	line-height:1em;
 	min-height:70px;
+	position:relative;
 }
 
 .contentboxdetails h1 {
@@ -133,6 +153,19 @@ a:hover {
 
 .contentboxdetails span {
 	color:#777;
+}
+
+.contentboxdetails .viewas {
+	position:absolute;
+	top:0px;
+	right:0px;
+	margin-right:10px;
+	font-size:0.8em;
+	text-align:right;
+}
+
+.contentboxdetails .viewas button {
+	margin-bottom:5px;
 }
 
 .realcontent {
@@ -155,6 +188,14 @@ a:hover {
 
 .realcontent .leftbox {
 	vertical-align: middle;
+}
+
+.realcontentlinks a {
+	color:orange;
+}
+
+.realcontentlinks a:hover {
+	color:#000;
 }
 
 .loggedinbox {
@@ -235,6 +276,10 @@ a:hover {
 	font-size:0.7em;
 	color:#777;
 	padding:2px;
+}
+
+.postborder .post-bottomtext .post-postdate {
+	display:inline-block;
 }
 
 .postborder .post-bottomright {
@@ -427,6 +472,19 @@ th {
 	font-size:1em;
 }
 
+#sitename-find {
+	padding:5px 0px;
+}
+
+#sitename-find img {
+	border: 4px solid #ddd;
+	border-radius:100%;
+	vertical-align:middle;
+	margin-right:2px;
+	height:50px;
+	width:50px;
+}
+
 .submitbutton {
 	margin-top:10px;
 	background-color:transparent;
@@ -592,7 +650,7 @@ th {
 	margin-left:50px;
 }
 
-.profileimgouterdiv img {
+.profileimgouterdiv #contentprofileimg {
 	border: 6px solid #fff;
 	border-radius:100%;
 	height:170px;
@@ -716,6 +774,28 @@ th {
 
 .connection p {
 	font-size:0.8em;
+}
+
+.viewas-footer {
+	position:fixed;
+	bottom:0px;
+	left:0px;
+	width:100%;
+	min-height:50px;
+	font-size:0.9em;
+	color:#fff;
+	background-color: rgba(0,0,0,0.7);
+	text-align:center;
+	padding:20px 50px;
+	z-index:5;
+}
+
+.viewas-footer a {
+	color:orange;
+}
+
+.viewas-footer a:hover {
+	color:#000;
 }
 
 /******* MEDIA QUERIES ******/
@@ -846,5 +926,10 @@ th {
 
 	.connectiondiv {
 		text-align:center;
+	}
+
+	.customizecontent {
+		position:relative;
+		top:50px;
 	}
 }

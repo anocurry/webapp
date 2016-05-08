@@ -4,23 +4,30 @@
 {% if request.session.login_id %}
   <div class="header-leftbar">
     <img src="/media/{{ user.profileImg }}" class="profileImg">
-    Hi, <a href="{% url 'user:index' %}">{{ user.username }}</a>
+    <span class="greeting">Hi, <a href="{% url 'user:index' %}">{{ user.username }}</a></span><br/>
+    <span class="header-links">
+    <a href="{% url 'main:index' %}" class="hvr-grow">Home <i class="fa fa-home" aria-hidden="true"></i></a>
+    <a href="{% url 'user:notifications' %}" class="hvr-grow link-margin-left">Notifications <i class="fa fa-envelope" aria-hidden="true"></i> {% if notifNum != 0 %}{{ notifNum }}{% endif %}</a>
+    </span>
   </div><div class="header-rightbar">
   <form action="{% url 'user:searchuser' %}" method="get">
     <input type="text" name="user_name" placeholder="Search a user..." />
     <button class="fa fa-search submitbutton white-search hvr-grow" type="submit"></button>
-  </form>
-  <a href="{% url 'user:notifications' %}" title="Notifications">Notifications {% if notifNum != 0 %}({{ notifNum }}){% endif %}</a> |
-  <a href="{% url 'user:settings' %}" title="Settings">Settings</a> |
-  <a href="{% url 'user:logout' %}" title="Logout">Logout</a>
+  </form><span class="header-links">
+  <a href="{% url 'user:connections' %}" class="hvr-grow link-margin-right">Connections <i class="fa fa-coffee" aria-hidden="true"></i></a>
+  <a href="{% url 'user:settings' %}" class="hvr-grow link-margin-right">Settings <i class="fa fa-cog" aria-hidden="true"></i></a>
+  <a href="{% url 'user:logout' %}" class="hvr-grow link-margin-right">Logout <i class="fa fa-sign-out" aria-hidden="true"></i></a>
+</span>
   </div>
 {% else %}
 <div class="header-rightbar">
   <form action="{% url 'user:searchuser' %}" method="get">
     <input type="text" name="user_name" placeholder="Search a user..." />
     <button class="fa fa-search submitbutton white-search hvr-grow" type="submit"></button>
-  </form>
-  <a href="{% url 'main:register' %}">Register</a> | <a href="{% url 'main:login' %}">Login</a>
+  </form><span class="header-links">
+  <a href="{% url 'main:index' %}" class="hvr-grow link-margin-right">Home <i class="fa fa-home" aria-hidden="true"></i></a>
+  <a href="{% url 'main:register' %}" class="hvr-grow link-margin-right">Register <i class="fa fa-plus-circle" aria-hidden="true"></i></a>
+  <a href="{% url 'main:login' %}" class="hvr-grow link-margin-right">Login <i class="fa fa-sign-in" aria-hidden="true"></i></a></span>
 </div>
 {% endif %}
 {% endblock %}

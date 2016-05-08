@@ -23,7 +23,7 @@
   {% endif %}
 </div>
 {% if ownprofile %}
-    <span class="post-floatleft post-bottomtext">{{ post.email }}</span>
+    <span class="post-floatleft post-bottomtext">{% if post.has_email %}{{ post.email }} <br/>{% endif %}<span class="post-postdate transparent">Last updated on {{ post.formatted_post_date }}</span></span>
     {% if post.vis == 0 %}
     <div class="post-floatright post-bottomright">
       <span class="post-bottomright-text transparent">{{ post.get_vis_display }}</span><i class="fa fa-lock"></i>

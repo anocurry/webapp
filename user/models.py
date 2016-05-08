@@ -55,6 +55,15 @@ class Post(models.Model):
     def has_url(self):
         return bool(self.url)
 
+    def has_email(self):
+        return bool(self.email)
+
+    def formatted_post_date(self):
+        month = self.post_date.strftime('%b')
+        day = str(self.post_date.day)
+        result = month + " " + day
+        return result
+
 class Notification(models.Model):
     fromuser = models.PositiveIntegerField()
     touser = models.PositiveIntegerField()

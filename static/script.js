@@ -47,6 +47,7 @@ $(document).ready(function() {
              $('#overlay').fadeIn(500);
              $('.postform').removeClass('animated bounceOut');
              $('.postform').addClass('animated bounceIn');
+             initsitename();
          },
          failure: function(data) {
              alert('Got an error dude');
@@ -67,6 +68,7 @@ $(document).ready(function() {
              $('#overlay').fadeIn(500);
              $('.postform').removeClass('animated bounceOut');
              $('.postform').addClass('animated bounceIn');
+             initsitename();
          },
          failure: function(data) {
              alert('Got an error dude');
@@ -79,6 +81,7 @@ $(document).ready(function() {
      $('.error-message').hide();
      $('.postform').removeClass('animated bounceIn');
      $('.postform').addClass('animated bounceOut');
+     $('#sitename-find').html('');
    })
 
    $('.deletepostbutton').click(function() {
@@ -131,6 +134,31 @@ $(document).ready(function() {
         $(this).find('span').addClass('transparent');
     });
 
+    $('.postborder').mouseenter(function() {
+      $(this).find('.post-postdate').removeClass('transparent');
+    })
+
+    $('.postborder').mouseleave(function() {
+      $(this).find('.post-postdate').addClass('transparent');
+    })
+
+    function initsitename() {
+      $('#id_sitename').change(function() {
+        var sitename = $(this).val();
+        $.ajax({
+            url: '/user/sitenamefind/',
+            type: 'get',
+  				  data: {'sitename': sitename},
+            success: function(data) {
+              $('#sitename-find').html(data);
+            },
+            failure: function(data) {
+                alert('Got an error dude');
+            }
+        });
+      })
+    }
+
     $('#bgimginput').change(function() {
   		if (this.files[0].size > 1500000) {
         //display errors here
@@ -143,7 +171,7 @@ $(document).ready(function() {
         reader.onload = function(_file) {
             image.src    = _file.target.result;              // url.createObjectURL(file);
             image.onload = function() {
-              $('.contentboxbg').attr('style', 'background:url("'+this.src+'") no-repeat fixed center;');
+              $('.contentboxbg').attr('style', 'background:url("'+this.src+'") no-repeat center;');
               $('#bgimginput').css('opacity', '0');
               $('#bgimginputbutton').removeClass('transparent');
               $('#bgimginputbutton').addClass('animated bounceIn');
@@ -168,7 +196,15 @@ $(document).ready(function() {
         reader.onload = function(_file) {
             image.src    = _file.target.result;              // url.createObjectURL(file);
             image.onload = function() {
-              $('#contentprofileimg').attr('src', this.src);
+              if (this.width > this.height) { /* 170 - 12 */
+                this.width = Math.floor(this.width / this.height * 158);
+                this.height = 158;
+              } else {
+                this.height = Math.floor(this.height / this.width * 158);
+                this.width = 158;
+              }
+              s = "background:url('"+this.src+"') no-repeat center; background-size:"+this.width+"px "+this.height+"px;";
+              $('#contentprofileimg').attr('style', s);
               $('#profileimginput').css('opacity', '0');
               $('#profileimginputbutton').removeClass('transparent');
               $('#profileimginputbutton').addClass('animated bounceIn');

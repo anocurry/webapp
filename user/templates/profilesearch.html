@@ -4,7 +4,7 @@
     {% if connected %}
     <p><form action="{% url 'user:disconnect' searcheduser.id %}" method="post">
       {% csrf_token %}
-      <button type="submit" class="connectbutton green hover-red" id="connectedbutton"><i class="fa fa-check" aria-hidden="true"></i><span> Connected</span></button>
+      <button type="submit" class="connectbutton green hover-red" id="connectedbutton" {% if viewas %}disabled{% endif %}><i class="fa fa-check" aria-hidden="true"></i><span> Connected</span></button>
     </form></p>
     {% else %}
         {% if notif == 2 %}
@@ -20,7 +20,7 @@
         {% else %}
         <p><form action="{% url 'user:newnotif' searcheduser.id %}" method="post">
           {% csrf_token %}
-          <button type="submit" class="connectbutton orange hover-green"><i class="fa fa-plus" aria-hidden="true"></i> Connect</button>
+          <button type="submit" class="connectbutton orange hover-green" {% if viewas %}disabled{% endif %}><i class="fa fa-plus" aria-hidden="true"></i> Connect</button>
         </form></p>
         {% endif %}
     {% endif %}

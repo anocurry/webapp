@@ -5,6 +5,7 @@ from django.core.urlresolvers import reverse
 from django.db.models import Q
 import datetime
 
+from PIL import Image
 from django.core.files import File
 import os
 
@@ -16,10 +17,10 @@ from .forms import PostForm, AccountForm
 def index(request):
     #display the logged in user here
     u = getLoggedInUser(request)
-    posts = getSortedUserPosts(u.id, True, True)
     if u is None:
         #redirect to the main page if the user is not logged in
         return HttpResponseRedirect(reverse('main:index'))
+    posts = getSortedUserPosts(u.id, True, True)
     form = PostForm()
     notifNum = getUnreadNotifNum(request)
     template = loader.get_template('user/index.html')
@@ -66,11 +67,31 @@ def newpostformid(request, post_id):
     template = loader.get_template('user/postform.html')
     return HttpResponse(template.render({'form': form,}, request))
 
+def sitenamefind(request):
+    sitename = request.GET['sitename']
+    connected_users = getConnectedUsers(request.session['login_id'])
+    template = loader.get_template('user/sitenamefind.html')
+    have_sameposts = []
+    count = 0
+    if bool(connected_users):
+        for c in connected_users:
+            posts = Post.objects.filter(Q(user_id=c.id) & ~Q(vis=0))
+            for p in posts:
+                if p.sitename.lower() == sitename.lower(): #check if the connected user has the post too
+                    have_sameposts.append(c)
+                    break
+        count = len(have_sameposts)
+        if count > 5: #if more than 5 users, get the first five users only...
+            have_sameposts = have_sameposts[:5]
+    count = count - 5
+    return HttpResponse(template.render({'connectedusers': have_sameposts, 'count': count,'sitename': sitename }, request))
+
+
 def getLoggedInUser(request):
     uid = request.session.get('login_id')
     try:
         u = User.objects.get(id=uid)
-    except User.DoesNotExist:
+    except (KeyError, User.DoesNotExist):
         return None
     return u
 
@@ -101,9 +122,29 @@ def search(request, user_id):
     return HttpResponse(template.render({'user': u, 'notifNum': notifNum, 'searcheduser': searcheduser, 'ownprofile': ownprofile, 'form': form, 'connected': connected, 'notif': n, 'posts': posts, }, request))
 
 def searchuser(request):
-    if request.GET['user_name']:
+    u = getLoggedInUser(request)
+    notifNum = getUnreadNotifNum(request)
+    try:
         searcheduser = User.objects.get(username=request.GET['user_name'])
-        return search(request, searcheduser.id)
+    except (KeyError, User.DoesNotExist):
+        template = loader.get_template('user/searchnotfound.html')
+        return HttpResponse(template.render({'user': u, 'notifNum': notifNum,}, request))
+    return search(request, searcheduser.id)
+
+def viewaspublic(request):
+    return viewasdetails(request, False)
+
+def viewasconnected(request):
+    return viewasdetails(request, True)
+
+def viewasdetails(request, connected):
+    searcheduser = getLoggedInUser(request)
+    notifNum = getUnreadNotifNum(request)
+    template = loader.get_template('user/search.html')
+    n = None
+    posts = getSortedUserPosts(searcheduser.id, False, connected)
+    return HttpResponse(template.render({'user': searcheduser, 'notifNum': notifNum, 'searcheduser': searcheduser, 'ownprofile': False, 'connected': connected, 'notif': n, 'posts': posts, 'viewas': True }, request))
+
 
 def settings(request):
     uid = request.session.get('login_id')
@@ -168,6 +209,17 @@ def editprofileimg(request):
     u = getLoggedInUser(request)
     if (bool(request.FILES)):
         pimg = request.FILES['profileImg']
+        img = Image.open(pimg)
+        #check if the image is a square...
+        if (img.width != img.height): #if the image is not a square
+            if (img.width > img.height): #crop the width
+                offset = (img.width - img.height)//2
+                newimg = img.crop((offset, 0, img.width-offset, img.height))
+            elif (img.width < img.height): #crop the height
+                offset = (img.height - img.width)//2
+                newimg = img.crop((0, offset, img.width, img.height-offset))
+            newimg.save("C:/Users/user/Documents/GitHub/webapp/media/cropped/pic/" + str(pimg))
+            pimg = 'cropped/pic/' + str(pimg) #if cropped, assign a new value to pimg..
         u.profileImg = pimg
         u.save()
         return HttpResponseRedirect(reverse('user:customize'))
@@ -285,7 +337,7 @@ def deletepost(request):
 
 def newnotif(request, user_id):
     uid = request.session.get('login_id')
-    n=Notification(fromuser=uid, touser=user_id, message='test')
+    n=Notification(fromuser=uid, touser=user_id, message='test', notif_date=datetime.datetime.now())
     n.save()
     return HttpResponseRedirect(reverse('user:search', args=(user_id,)))
 
@@ -309,26 +361,38 @@ def connections(request):
         return HttpResponse(template.render({'user': u, 'notifNum': notifNum}, request))
     #otherwise, get them conected users
     connectedusers = []
-    for c in connections:
-        if (c.fromuser == u.id):
-            connected_u = User.objects.get(id=c.touser)
-        else:
-            connected_u = User.objects.get(id=c.fromuser)
+    connected_users = getConnectedUsers(u.id)
+    for c in connected_users:
         u_posts = u.post_set.all() #get logged in user's all posts
-        connected_u_posts = Post.objects.filter(Q(user_id=connected_u.id) & ~Q(vis=0))
+        connected_u_posts = Post.objects.filter(Q(user_id=c.id) & ~Q(vis=0))
         count = connected_u_posts.count()
         sameposts = []
         for p in u_posts:
-            posts = Post.objects.filter(Q(user_id=connected_u.id) & Q(sitename=p.sitename) & ~Q(vis=0))
+            #find connected users' non-private posts
+            posts = Post.objects.filter(Q(user_id=c.id) & ~Q(vis=0))
             for i in posts:
-                sameposts.append(i)
+                if i.sitename.lower() == p.sitename.lower(): #match the site names
+                    sameposts.append(i)
         connectedusers.append({
-            'connecteduser': connected_u,
+            'connecteduser': c,
             'connecteduser_postcount': count,
             'connecteduser_sameposts': sameposts,
         })
-    print(connectedusers)
     return HttpResponse(template.render({'user': u, 'notifNum': notifNum, 'connectedusers': connectedusers}, request))
+
+def getConnectedUsers(user_id):
+    connections = Connection.objects.filter(Q(fromuser=user_id) | Q(touser=user_id))
+    if (not bool(connections)): #if there's no connections, return none...
+        return None
+    connectedusers = []
+    for c in connections:
+        if (c.fromuser == user_id):
+            connected_u = User.objects.get(id=c.touser)
+        else:
+            connected_u = User.objects.get(id=c.fromuser)
+        connectedusers.append(connected_u)
+    return connectedusers
+
 
 def newconnect(request, user_id):
     uid = request.session.get('login_id')

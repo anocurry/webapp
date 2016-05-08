@@ -3,4 +3,25 @@
 <div class="contentboxdetails">
   <h1>{{ searcheduser.displayname }}</h1><span>@{{ searcheduser.username }}</span>
   <br/>{{ searcheduser.description }}
-  <p>{% if ownprofile %}View as...{% endif %}</p>
+  <p class="viewas">
+    {% if ownprofile %}
+    <a href="{% url 'user:viewasconnected' %}">
+      <button class="connectbutton orange hover-green">View as connected user</button>
+    </a><br/>
+    <a href="{% url 'user:viewaspublic' %}">
+      <button class="connectbutton orange hover-green">View as public</button>
+    </a>
+
+    {% endif %}
+  </p>
+
+  {% if viewas %}
+  <div class="viewas-footer">
+    {% if connected %}
+      You are currently viewing as a connected user.
+    {% else %}
+      You are currently viewing as public.
+    {% endif %}<br/>
+    <a href="{% url 'user:index' %}" class="hvr-grow"><i class="fa fa-chevron-circle-left" aria-hidden="true"></i> Return</a>
+  </div>
+  {% endif %}

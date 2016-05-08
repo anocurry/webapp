@@ -1,0 +1,19 @@
+{% if connectedusers %}
+  {% for c in connectedusers %}
+  <img src="/media/{{ c.profileImg }}"/>
+  {% endfor %}
+  {% if count > 0 %}
+    {% for c in connectedusers %}
+      {% if forloop.first %}{{ c.username }}
+      {% else %}, {{ c.username }}
+      {% endif %}
+    {% endfor %} and {{ count }} other users are using {{ sitename }}.
+  {% else %}
+    {% for c in connectedusers %}
+      {% if forloop.first %}{{ c.username }}
+      {% elif not forloop.last %}
+        , {{ c.username }}{% else %} and {{ c.username }}
+      {% endif %}
+    {% endfor %} are using {{ sitename }}.
+  {% endif %}
+{% endif %}
