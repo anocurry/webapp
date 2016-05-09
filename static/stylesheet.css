@@ -164,6 +164,10 @@ a:hover {
 	text-align:right;
 }
 
+.contentboxdetails .viewas a {
+	display: block;
+}
+
 .contentboxdetails .viewas button {
 	margin-bottom:5px;
 }
@@ -443,6 +447,14 @@ a .post-siteusername:hover {
 	padding:0px 20px 20px 20px;
 }
 
+.optiondiv {
+	background-color:red;
+}
+
+.optioncount {
+	position:absolute;
+}
+
 #theform table, .styledform table {
 	width:100%;
 }
@@ -452,7 +464,7 @@ th {
 	text-align:left;
 }
 
-#theform input, .styledform input {
+#theform input:not([type="radio"]), .styledform input:not([type="radio"]) {
 	width:100%;
 	border:0px;
 	background-color:#e4e4e4;
@@ -464,7 +476,26 @@ th {
 	border:0px;
 }
 
-#theform option, .styledform option {
+#theform ul, .styledform ul {
+	list-style-type:none;
+	padding:0px;
+	margin:0px;
+	text-align:left;
+}
+#theform li, .styledform li {
+	display:inline-block;
+	font-size:0.8em;
+}
+
+#theform .radiobutton, .styledform .radiobutton {
+}
+
+#id_vis label[for="id_vis_0"] {
+}
+
+#id_vis label:hover, #id_usage label:hover {
+	cursor:pointer;
+	font-weight:bold;
 }
 
 .styledform input {
@@ -823,6 +854,16 @@ th {
 		width:30%;
 	}
 
+	.contentboxdetails .viewas {
+		position:relative;
+		margin-right:10px;
+		font-size:0.8em;
+		text-align:left;
+	}
+	.contentboxdetails .viewas a {
+		display:inline-block;
+	}
+
 }
 
 @media screen and (max-width:600px) {
@@ -858,6 +899,17 @@ th {
 		margin:0px;
 		position:relative;
 		top:-80px;
+	}
+	.contentboxdetails .viewas {
+		text-align:center;
+	}
+
+	.contentboxdetails .viewas a {
+		display:block;
+	}
+
+	.postform {
+		font-size:0.8em;
 	}
 
 	.profileimgouterdiv {

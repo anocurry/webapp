@@ -2,33 +2,39 @@
 
 {% block title %}Notifications {% endblock %}
 
+{% block js %}
+<script>
+$.ajax({
+    url: '/user/readnotifs',
+    type: 'get',
+    success: function(data) {
+        //alert(data);
+    },
+    failure: function(data) {
+        alert('Got an error dude');
+    }
+});
+</script>
+{% endblock %}
+
 {% block content %}
 <div class="realcontent">
   <h1>Notifications</h1>
   Notifications will appear in your inbox when a user sends you a connection request, or when a user has acceted your connection request.
   <br/><br/>
-{% for notif in notifs %}
-    <div class="notif">
-    {% if notif.fromuser == request.session.login_id %}
-    <img src="/media/{{ notif.to_user_profileimg }}" />
-        {% if notif.is_accepted %}
-            You are now connected with <a href="{% url 'user:search' notif.touser %}">{{ notif.to_username }}</a>
-        {{ notif.display_from_self }}
-        {% endif %}
-        <br/><span><i class="fa fa-calendar" aria-hidden="true"></i> {{ notif.notif_date }}</span>
-    {% else %}
-    <img src="/media/{{ notif.from_user_profileimg }}" />
-        {% if notif.is_accepted %}
-            You have accepted <a href="{% url 'user:search' notif.fromuser %}">{{ notif.from_username }}</a>'s connection request.
-        {% else %}
-            <a href="{% url 'user:search' notif.fromuser %}">{{ notif.from_username }}</a> has sent you a connection request.
-        {% endif %}
-        <br/><span><i class="fa fa-calendar" aria-hidden="true"></i> {{ notif.notif_date }}</span>
+  {% if toread or readnotifs %}
+    {% if toread %}
+      {% with notifs=toread %}
+        {% include 'notifdetails.html' %}
+      {% endwith %}
+      <hr style="opacity:0.5; margin:10px 0px;">
     {% endif %}
-    </div>
-{% empty %}
+    {% with notifs=readnotifs %}
+      {% include 'notifdetails.html' %}
+    {% endwith %}
+  {% else %}
   <p class="message">You do not have any notifications yet.</p>
-{% endfor %}
+  {% endif %}
 </div>
 
 {% endblock %}

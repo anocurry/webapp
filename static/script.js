@@ -142,6 +142,7 @@ $(document).ready(function() {
       $(this).find('.post-postdate').addClass('transparent');
     })
 
+    initsitename();
     function initsitename() {
       $('#id_sitename').change(function() {
         var sitename = $(this).val();
@@ -151,6 +152,20 @@ $(document).ready(function() {
   				  data: {'sitename': sitename},
             success: function(data) {
               $('#sitename-find').html(data);
+            },
+            failure: function(data) {
+                alert('Got an error dude');
+            }
+        });
+      })
+      $('#id_sitename').keyup(function() {
+        var sitename = $(this).val();
+        $.ajax({
+            url: '/user/sitenamelist/',
+            type: 'get',
+            data: {'sitename': sitename},
+            success: function(data) {
+              $('#sitenamelist').html(data);
             },
             failure: function(data) {
                 alert('Got an error dude');

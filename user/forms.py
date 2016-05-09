@@ -30,6 +30,12 @@ class PostForm(ModelForm):
             'siteusername': 'Username',
             'vis' : 'Visibility',
         }
+        widgets = {
+            'sitename': forms.TextInput(attrs={'list': 'sitenamelist', 'autocomplete': 'on'}),
+            'vis': forms.RadioSelect(attrs={'class': 'radiobutton'}),
+            'usage': forms.RadioSelect(attrs={'class': 'radiobutton'}),
+        }
+
 """
 class AccountForm_2(forms.Form):
     username = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'value': 'your username'}))
@@ -54,4 +60,7 @@ class AccountForm(ModelForm):
             'profileImg' : 'Profile image',
             'bgImg' : 'Background image',
             'useBg' : 'Enable background',
+        }
+        widgets = {
+            'vis': forms.RadioSelect(attrs={'class': 'radiobutton'}),
         }

@@ -75,16 +75,32 @@ def sitenamefind(request):
     count = 0
     if bool(connected_users):
         for c in connected_users:
-            posts = Post.objects.filter(Q(user_id=c.id) & ~Q(vis=0))
-            for p in posts:
-                if p.sitename.lower() == sitename.lower(): #check if the connected user has the post too
-                    have_sameposts.append(c)
-                    break
+            posts = Post.objects.filter(Q(user_id=c.id) & ~Q(vis=0) & Q(sitename__iexact=sitename))
+            if posts:
+                have_sameposts.append(c)
         count = len(have_sameposts)
         if count > 5: #if more than 5 users, get the first five users only...
             have_sameposts = have_sameposts[:5]
     count = count - 5
     return HttpResponse(template.render({'connectedusers': have_sameposts, 'count': count,'sitename': sitename }, request))
+
+def sitenamelist(request):
+    sitename = request.GET['sitename']
+    sitenamelist = []
+    optionlist = []
+    if sitename != '':
+        posts = Post.objects.filter(sitename__contains=sitename)
+        for p in posts:
+            if p.sitename.lower() not in sitenamelist:
+                sitenamelist.append(p.sitename.lower())
+                count = Post.objects.filter(sitename__iexact=p.sitename).count()
+                #optionlist.append('<option label="'+str(count)+' users">' + p.sitename.lower() +'</option>')
+                optionlist.append('<option>' + p.sitename.lower() +'</option>')
+                #optionlist.append(p.sitename.lower())
+        if (len(optionlist) > 7): #suggest only 7 items max...
+            optionlist = optionlist[:7]
+    #print(optionlist)
+    return HttpResponse(optionlist)
 
 
 def getLoggedInUser(request):
@@ -243,14 +259,19 @@ def editbgimg(request):
 
 def notifications(request):
     u = getLoggedInUser(request)
-    notifs = Notification.objects.filter(Q(fromuser=u.id) & Q(is_accepted=True) | Q(touser=u.id)).order_by('-notif_date')
-    toread = Notification.objects.filter(Q(fromuser=u.id) & Q(is_accepted=True) | Q(touser=u.id) & Q(is_accepted=False))
+    readnotifs = Notification.objects.filter(Q(fromuser=u.id) & Q(is_accepted=True) & Q(is_read=True) | Q(touser=u.id) & Q(is_read=True)).order_by('-notif_date')
+    toread = Notification.objects.filter(Q(fromuser=u.id) & Q(is_accepted=True) & Q(is_read=False) | Q(touser=u.id) & Q(is_accepted=False) & Q(is_read=False)).order_by('-notif_date')
+    notifNum = getUnreadNotifNum(request)
+    template = loader.get_template('user/notifications.html')
+    return HttpResponse(template.render({'user': u, 'readnotifs': readnotifs, 'toread': toread,'notifNum': notifNum}, request))
+
+def readnotifs(request):
+    u = getLoggedInUser(request)
+    toread = Notification.objects.filter(Q(fromuser=u.id) & Q(is_accepted=True) & Q(is_read=False) | Q(touser=u.id) & Q(is_accepted=False) & Q(is_read=False))
     for n in toread:
         n.is_read = True
         n.save()
-    notifNum = getUnreadNotifNum(request)
-    template = loader.get_template('user/notifications.html')
-    return HttpResponse(template.render({'user': u, 'notifs': notifs, 'notifNum': notifNum}, request))
+    return HttpResponse("Notifications have been read")
 
 def getUnreadNotifNum(request):
     u = getLoggedInUser(request)

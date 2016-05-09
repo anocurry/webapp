@@ -5,15 +5,15 @@ import datetime
 # Create your models here.
 class User(models.Model):
     VIS_CHOICES=(
-        (0, 'Private'),
         (1, 'Public'),
+        (0, 'Private'),
     )
     username = models.CharField(max_length=50)
     password = models.CharField(max_length=50)
     email = models.EmailField()
     displayname = models.CharField(max_length=50)
     description = models.CharField(max_length=200, blank=True)
-    vis = models.PositiveSmallIntegerField(choices=VIS_CHOICES)
+    vis = models.PositiveSmallIntegerField(choices=VIS_CHOICES, default=1)
     profileImg = models.ImageField(upload_to='pic/', default = 'pic/default.jpg')
     bgImg = models.ImageField(upload_to='bg/', default = 'bg/default.jpg')  #change to imagefield?
     useBg = models.BooleanField()
@@ -24,15 +24,15 @@ class User(models.Model):
 
 class Post(models.Model):
     VIS_CHOICES=(
-        (0, 'Private'),
-        (1, 'Reserved'),
         (2, 'Public'),
+        (1, 'Reserved'),
+        (0, 'Private'),
     )
     USAGE_CHOICES=(
-        (0, 'On hiatus'),
-        (1, 'Least used'),
-        (2, 'Moderately used'),
         (3, 'Most used'),
+        (2, 'Moderately used'),
+        (1, 'Least used'),
+        (0, 'On hiatus'),
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     sitename = models.CharField(max_length=50)
@@ -40,10 +40,10 @@ class Post(models.Model):
     email = models.EmailField(blank=True)
     url = models.URLField(blank=True)
     post_date = models.DateTimeField(auto_now=True)
-    usage = models.PositiveSmallIntegerField(choices=USAGE_CHOICES)
+    usage = models.PositiveSmallIntegerField(choices=USAGE_CHOICES, default=3)
     category = models.CharField(max_length=50, blank=True)
     description = models.CharField(max_length=100, blank=True)
-    vis = models.PositiveSmallIntegerField(choices=VIS_CHOICES)
+    vis = models.PositiveSmallIntegerField(choices=VIS_CHOICES, default=2)
     logo = models.ImageField(upload_to='logo/', default = 'logo/default/pizza.png') #change to imagefield?
 
     def __str__(self):
