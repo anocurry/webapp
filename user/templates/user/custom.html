@@ -1,0 +1,72 @@
+{% extends 'main/layout.html' %}
+
+{% block title %}Custom widgets {% endblock %}
+
+{% block js %}
+<script>
+$(document).ready(function() {
+  $('#togglecheckbox').click(function() {
+      var toggle = this.checked;
+      checkboxes = document.getElementsByName('customchoice');
+      $.each(checkboxes, function() {
+        $(this).attr('checked', toggle);
+      })
+  })
+
+  $('#customform').submit(function() {
+    values = []
+    $('#customform input:checked').each(function(i) {
+      values[i] = $(this).val();
+    })
+    result = values.join(", ");
+    $.ajax({
+        url: "{% url 'user:customsubmit' %}",
+        type: 'get',
+        data: {'customchoice': result},
+        success: function(data) {
+          //alert(data);
+          $('#customwidgets').html(data);
+        },
+        failure: function(data) {
+            alert('Got an error dude');
+        }
+    });
+    return false; //!!!!
+  })
+})
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="realcontent">
+  <h1>Custom widgets</h1>
+  <span class="realcontentlinks">
+  <a href="{% url 'user:settings' %}" class="hvr-grow">Back to settings <i class="fa fa-cog" aria-hidden="true"></i></a></span>
+  <p>Generate widgets from the accounts you've listed on your profile:
+  <br/>* only accounts with URLs will be listed.</p>
+  <input type="checkbox" id="togglecheckbox"/> Toggle All
+  <br/>
+  <form id="customform" method="get">
+      {% for p in posts %}
+      <div class="post customchoicebox"><input type="checkbox" name="customchoice" value="{{ p.id }}" /><img src="/media/{{ p.logo }}">
+        <div><a href="{{ p.url }}"><span class="post-siteusername">{{ p.siteusername }}</span></a><br/><span class="post-sitename">{{ p.sitename }}</span>
+          {% if p.vis == 0 %}
+          <div class="post-bottomright">
+            <i class="fa fa-lock"></i><span class="post-bottomright-text transparent">{{ p.get_vis_display }}</span>
+          </div>
+          {% elif p.vis == 1 %}
+          <div class="post-bottomright">
+            <i class="fa fa-unlock-alt"></i><span class="post-bottomright-text transparent">{{ p.get_vis_display }}</span>
+          </div>
+          {% endif %}
+      </div>
+      </div>
+      {% endfor %}
+    <center><button class="submitbutton hvr-grow" type="submit"><span class="buttonleftfont oswald-font">Generate code</span> <i class="fa fa-code fa-2x"></i></button></center>
+  </form>
+  <br/>
+  <div id="customwidgets">{{ result }}</div>
+  <br/><br/>
+
+</div>
+{% endblock %}

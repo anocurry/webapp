@@ -6,9 +6,11 @@
 <div class="realcontent">
 <h1>Settings</h1>
 <span class="realcontentlinks">
-<a href="{% url 'user:customize' %}" class="hvr-grow">Customize profile <i class="fa fa-picture-o" aria-hidden="true"></i></a></span>
+<a href="{% url 'user:customize' %}" class="hvr-grow">Customize profile <i class="fa fa-picture-o" aria-hidden="true"></i></a>
+<a href="{% url 'user:custom' %}" class="hvr-grow">Generate widgets <i class="fa fa-code" aria-hidden="true"></i></a></span>
 <p>Changing your account visibility to private will automatically make all your information only visible to connected users and yourself.</p>
 {% if error_message %} <p class="error-message">{{ error_message }}</p>{% endif %}
+{% if message %} <p class="message">{{ message }}</p>{% endif %}
 <form action="{% url 'user:editsettings' %}" method="post" enctype="multipart/form-data">
 {% csrf_token %}
     <div class="styledform"><table>{{ form.as_table }}</table></div>

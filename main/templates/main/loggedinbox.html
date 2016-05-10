@@ -4,7 +4,6 @@
   <p>You have a total of {{ user.post_set.all.count }} accounts listed on your profile.</p>
   <br />
   <p><a href="{% url 'user:index' %}" class="hvr-bob">Go to your profile <i class="fa fa-chevron-circle-right fa-1x" aria-hidden="true"></i></a></p>
-</div>
-<div class="mainbox logoutbox">
+</div><div class="mainbox logoutbox">
   <p><a href="{% url 'user:logout' %}" class="hvr-bob"><i class="fa fa-chevron-circle-left fa-1x" aria-hidden="true"></i> Logout</a></p>
 </div>

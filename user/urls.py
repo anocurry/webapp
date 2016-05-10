@@ -27,5 +27,7 @@ urlpatterns = [
     url(r'^connections/$', views.connections, name='connections'),
     url(r'^(?P<user_id>[0-9]+)/newconnect/$', views.newconnect, name='newconnect'),
     url(r'^(?P<user_id>[0-9]+)/disconnect/$', views.disconnect, name='disconnect'),
+    url(r'^custom/$', views.custom, name='custom'),
+    url(r'^customsubmit/$', views.customsubmit, name='customsubmit'),
     url(r'^logout/$', views.logout, name='logout'),
 ]

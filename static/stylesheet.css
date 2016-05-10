@@ -182,7 +182,7 @@ a:hover {
 	color:#777;
 }
 
-.realcontent .mainbox {
+.mainbox {
 	text-align:center;
 	display:block;
 	margin-bottom:80px;
@@ -190,12 +190,13 @@ a:hover {
 	border-bottom:1px solid #777;
 }
 
-.realcontent .leftbox {
+.leftbox {
 	vertical-align: middle;
 }
 
 .realcontentlinks a {
 	color:orange;
+	margin-right:30px;
 }
 
 .realcontentlinks a:hover {
@@ -286,17 +287,17 @@ a:hover {
 	display:inline-block;
 }
 
-.postborder .post-bottomright {
+.post-bottomright {
 	margin-right:5px;
 	position:relative;
 	color:#777;
 }
 
-.postborder .post-bottomright:hover {
+.post-bottomright:hover {
 	cursor:pointer;
 }
 
-.postborder .post-bottomright-text {
+.post-bottomright-text {
 	font-size:0.7em;
 	color:#777;
 	display:inline-block;
@@ -614,7 +615,7 @@ th {
 .message {
 	font-size:1em;
 	padding:20px;
-	background-color: #e4e4e4;
+	background-color: #f7eed6;
 	border-radius: 20px;
 }
 
@@ -718,6 +719,79 @@ th {
 	margin-top:20px;
 }
 
+.customchoicebox {
+	padding:10px;
+	min-height:70px;
+	text-align:left;
+	vertical-align: middle;
+	margin-bottom:5px;
+}
+.customchoicebox img {
+	display:inline-block;
+	vertical-align: middle;
+	margin:0px 5px;
+}
+
+.customchoicebox input {
+	display:inline-block;
+	vertical-align: middle;
+}
+
+.customchoicebox div {
+	display:inline-block;
+	max-width:118px;
+	vertical-align: middle;
+}
+
+.customchoicebox .post-sitename {
+	font-size:0.8em;
+}
+
+.customchoicebox .post-bottomright {
+	position:static;
+	display:block;
+	margin-top:5px;
+}
+
+.customchoicebox .post-bottomright .post-bottomright-text {
+	margin-left:5px;
+}
+
+#customwidgets div {
+	display:inline-block;
+}
+
+.customwidgetbox {
+	border:1px solid #e4e4e4;
+	width:100%;
+	text-align:center;
+	vertical-align: top;
+}
+
+.customwidgetcol {
+	padding:20px;
+	display:inline-block;
+	text-align:left;
+	width:50%;
+	height:100%;
+	margin:0px;
+	vertical-align:text-top;
+}
+
+.customwidgetcol textarea {
+	width:100%;
+	border:0px;
+	border: 1px solid #e4e4e4;
+	font-size:0.9em;
+	padding:10px;
+	font-family:calibri, sans-serif;
+	color:#777;
+	resize:none;
+	overflow:hidden;
+	width:100%;
+	min-height:100px;
+}
+
 .oxygen-font {
 	font-family: 'Oxygen', calibri, sans-serif;
 }
@@ -735,6 +809,14 @@ th {
 	padding:20px;
 	line-height:1em;
 	margin-bottom:10px;
+}
+
+.toread {
+	background-color: #f7eed6;
+}
+
+.readnotifs {
+	background-color: #e4e4e4;
 }
 
 .notif img {
@@ -842,6 +924,14 @@ th {
 		padding:20px 20px;
 	}
 
+	.link-margin-right {
+		margin-right:5px;
+	}
+
+	.link-margin-left {
+		margin-left:5px;
+	}
+
 	.postform {
 		width:80%;
 	}
@@ -891,6 +981,14 @@ th {
 		text-align:left;
 	}
 
+	.link-margin-right {
+		margin-right:10px;
+	}
+
+	.link-margin-left {
+		margin-left:10px;
+	}
+
 	.contentbox {
 		text-align:center;
 	}
@@ -909,7 +1007,13 @@ th {
 	}
 
 	.postform {
+		height:90%;
+	}
+
+	.postform form {
 		font-size:0.8em;
+		overflow-y:scroll;
+		height:85%;
 	}
 
 	.profileimgouterdiv {
@@ -983,5 +1087,11 @@ th {
 	.customizecontent {
 		position:relative;
 		top:50px;
+		margin-bottom:50px;
+	}
+
+	.customwidgetcol {
+		display:block;
+		width:100%;
 	}
 }

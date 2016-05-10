@@ -141,7 +141,7 @@ def searchuser(request):
     u = getLoggedInUser(request)
     notifNum = getUnreadNotifNum(request)
     try:
-        searcheduser = User.objects.get(username=request.GET['user_name'])
+        searcheduser = User.objects.get(username__iexact=request.GET['user_name'])
     except (KeyError, User.DoesNotExist):
         template = loader.get_template('user/searchnotfound.html')
         return HttpResponse(template.render({'user': u, 'notifNum': notifNum,}, request))
@@ -163,19 +163,45 @@ def viewasdetails(request, connected):
 
 
 def settings(request):
-    uid = request.session.get('login_id')
-    u = User.objects.get(id=uid)
+    try:
+        uid = request.session.get('login_id')
+        u = User.objects.get(id=uid)
+    except (KeyError, User.DoesNotExist):
+        return HttpResponseRedirect(reverse('main:index'))
+
+    message = getMessage(request, 'settings_success', "Your settings have been successfully changed.")
     notifNum = getUnreadNotifNum(request)
     form = AccountForm(instance=u)
     template = loader.get_template('user/settings.html')
-    return HttpResponse(template.render({'form': form, 'user': u, 'notifNum': notifNum}, request))
+    return HttpResponse(template.render({'form': form, 'user': u, 'notifNum': notifNum, 'message': message}, request))
+
+def getMessage(request, sessionName, successMessage):
+    if get_sessionSuccess(request, sessionName):
+        message = successMessage
+        request.session[sessionName] = False
+    else:
+        message = None
+    return message
+
+def get_sessionSuccess(request, name):
+    try:
+        result = request.session[name]
+    except KeyError:
+        result = False
+    return result
 
 def customize(request):
-    uid = request.session.get('login_id')
-    u = User.objects.get(id=uid)
+    try:
+        uid = request.session.get('login_id')
+        u = User.objects.get(id=uid)
+    except (KeyError, User.DoesNotExist):
+        return HttpResponseRedirect(reverse('main:index'))
+    message = getMessage(request, 'profileImg_success', "Your profile image has been successfully updated.")
+    if not message:
+        message = getMessage(request, 'bgImg_success', "Your header image has been successfully updated.")
     notifNum = getUnreadNotifNum(request)
     template = loader.get_template('user/customize.html')
-    return HttpResponse(template.render({'user': u, 'notifNum': notifNum}, request))
+    return HttpResponse(template.render({'user': u, 'notifNum': notifNum, 'message': message}, request))
 
 def editsettings(request):
     #do checking for password first...
@@ -190,7 +216,7 @@ def editsettings(request):
             'notifNum': notifNum,
         })
     try:
-        u1 = User.objects.get(~Q(id=u.id) & Q(username=u.username) | ~Q(id=u.id) & Q(email=u.email))
+        u1 = User.objects.get(~Q(id=u.id) & Q(username__iexact=request.POST['username']) | ~Q(id=u.id) & Q(email=request.POST['email']))
     except User.DoesNotExist:
         #if details do not clash, save the user's new settings...
         form = AccountForm(request.POST)
@@ -203,6 +229,7 @@ def editsettings(request):
             if (bool(request.POST['new_password'])):
                 u.password = request.POST['new_password']
             u.save()
+            request.session['settings_success'] = True
             return HttpResponseRedirect(reverse('user:settings'))
         else:
             form = AccountForm(instance=u)
@@ -238,6 +265,7 @@ def editprofileimg(request):
             pimg = 'cropped/pic/' + str(pimg) #if cropped, assign a new value to pimg..
         u.profileImg = pimg
         u.save()
+        request.session['profileImg_success'] = True
         return HttpResponseRedirect(reverse('user:customize'))
     #if failed, return to user's customize page
     return render(request, 'user/customize.html', {
@@ -250,6 +278,7 @@ def editbgimg(request):
         bgimg = request.FILES['bgImg']
         u.bgImg = bgimg
         u.save()
+        request.session['bgImg_success'] = True
         return HttpResponseRedirect(reverse('user:customize'))
     #if failed, return to user's customize page
     return render(request, 'user/customize.html', {
@@ -464,6 +493,29 @@ def findNotif(request, user_id):
         except Notification.DoesNotExist:
             #display as 'send connection' or something
             return 0
+
+def custom(request):
+    try:
+        uid = request.session.get('login_id')
+        u = User.objects.get(id=uid)
+    except (KeyError, User.DoesNotExist):
+        return HttpResponseRedirect(reverse('main:index'))
+
+    notifNum = getUnreadNotifNum(request)
+    posts = Post.objects.filter(Q(user_id=u.id) & ~Q(url=''))
+    template = loader.get_template('user/custom.html')
+    return HttpResponse(template.render({'posts': posts, 'user': u, 'notifNum': notifNum,}, request))
+
+def customsubmit(request):
+    print("### PRINTING CUSTOM SUBMIT ### ")
+    posts = []
+    choices = request.GET['customchoice'].split(", ")
+    for i in choices:
+        posts.append(Post.objects.get(id=int(i)))
+    print(choices)
+    template = loader.get_template('user/customwidgethtml.html')
+    return HttpResponse(template.render({'posts': posts, }, request))
+
 
 def logout(request):
     try:

@@ -2,8 +2,54 @@
 
 {% block title %}Main page {% endblock %}
 
-{% block content %}
-<div class="realcontent">
+{% block css %}
+
+<style>
+body {
+  overflow:hidden;
+  background-image:url('/media/{% if user %}{{ user.bgImg }}{% else %}bg/default.jpg{% endif %}');
+  background-size:cover;
+  background-repeat:no-repeat;
+  background-origin:center;
+  border:1px solid #000;
+}
+
+.content {
+  margin-top:5%;
+}
+
+.loggedinbox {
+  display:inline-block;
+  width:100%;
+  border-radius:20px;
+  background-color: rgba(228,228,228,0.9);
+  margin-bottom:0px;
+}
+/*
+.logoutbox {
+  display:inline-block;
+  width:100%;
+  border-radius:0px 0px 20px 20px;
+  background-color: rgba(228,228,228,0.9);
+  margin:0px;
+  border:0px;
+}
+
+.logoutbox a {
+  color:orange;
+}
+*/
+@media screen and (max-width:600px) {
+  .loggedinbox {
+    border-radius:0px;
+  }
+}
+</style>
+{% endblock %}
+
+{% block outsidecontent %}
+<div class="content wow fadeInUp">
+<div class="">
   {% if request.session.loggedin %}
   {% include 'main/loggedinbox.html' %}
   {% else %}
@@ -15,7 +61,7 @@
       <a href="{% url 'main:login' %}" class="hvr-bob">Login <i class="fa fa-chevron-circle-right fa-1x" aria-hidden="true"></i></a></p>
   </div>
   {% endif %}
-
+<!--
   <div class="wow fadeInUp mainbox">
     <i class="fa fa-asterisk fa-4x fa-border orange-text leftbox" aria-hidden="true"></i>
     <h1 class="title">Link your accounts to one place</h1>
@@ -34,5 +80,8 @@
     <h1 class="title">Connect with others</h1>
     <p>Connect with your peers. Present your information differently to strangers, to your friends and to yourself.</p>
   </div>
+-->
 </div>
 {% endblock %}
+
+{% block contentclass %} hidden{% endblock %}

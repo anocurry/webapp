@@ -37,10 +37,11 @@ def newuser(request):
     if form.is_valid():
         try:
             #check if there's a user with same username or email
-            u = User.objects.get(Q(username=request.POST['username']) | Q(email=request.POST['email']))
+            u = User.objects.get(Q(username__iexact=request.POST['username']) | Q(email=request.POST['email']))
         except (User.DoesNotExist): #if there is not... create a new user
             newuser = User(username=request.POST['username'], password=request.POST['password'], email=request.POST['email'], displayname=request.POST['username'], description="default description", vis=1, profileImg="pic/default.png", bgImg="bg/default.jpg", useBg=False)
             newuser.save()
+            request.session['register_success'] = True
             return HttpResponseRedirect(reverse('main:login')) #... and redirect to login page
         #otherwise, redirect back to registration page with an error message
         return render(request, 'main/register.html', {
@@ -55,19 +56,20 @@ def newuser(request):
 
 def login(request):
     form = LoginForm()
+    message = user.views.getMessage(request, 'register_success', "Your new account has been successfully created.")
     try:
         u = User.objects.get(id=request.session['login_id'])
     except (KeyError, User.DoesNotExist):
         u = None
     template = loader.get_template('main/login.html')
-    return HttpResponse(template.render({'user': u, 'form': form,}, request))
+    return HttpResponse(template.render({'user': u, 'form': form, 'message': message}, request))
 
 def loginauth(request):
     form = LoginForm(request.POST)
     if form.is_valid():
         try:
             #check if there's a user with same username or email
-            u = User.objects.get(Q(username=request.POST['username']) | Q(email=request.POST['username']))
+            u = User.objects.get(Q(username__iexact=request.POST['username']) | Q(email=request.POST['username']))
         except (User.DoesNotExist): #if there is not... redirect to the login page
             return render(request, 'main/login.html', {
                 'error_message': "This username or email does not exist. Did you enter it correctly?",

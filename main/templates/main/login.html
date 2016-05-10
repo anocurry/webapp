@@ -6,6 +6,7 @@
 <div class="realcontent">
   <h1>{% if request.session.loggedin %}You're already logged in{% else %}Login{% endif %}</h1>
   {% if error_message %}<p class="error-message">{{ error_message }}</p>{% endif %}
+  {% if message %}<p class="message">{{ message }}</p>{% endif %}
   {% if request.session.loggedin %}
   {% include 'main/loggedinbox.html' %}
   {% else %}

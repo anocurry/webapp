@@ -1,0 +1,18 @@
+<h2>Preview</h2>
+<div class="customwidgetbox">
+  <div class="customwidgetcol">
+  {% autoescape off %}
+  <textarea onclick="this.focus();this.select()">
+    <div style="border:1px solid #e4e4e4; width:100%; padding:15px; color:#777; font-family:calibri; font-size:1em;">
+      Links:<br/>
+    {% for p in posts %}<a href="{{ p.url }}"><img src="/media/{{ p.logo }}" style="width:20px;height:20px;" alt="{{ p.sitename }}"/></a> {% endfor %}
+    </div>
+  </textarea>
+  {% endautoescape %}
+  </div><div class="customwidgetcol">
+    <div style="border:1px solid #e4e4e4; width:100%; padding:15px; color:#777; font-family:calibri; font-size:1em;">
+      Links:<br/>
+    {% for p in posts %}<a href="{{ p.url }}"><img src="/media/{{ p.logo }}" style="width:20px;height:20px;" alt="{{ p.sitename }}"/></a> {% endfor %}
+    </div>
+  </div>
+</div>

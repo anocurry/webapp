@@ -1,5 +1,5 @@
 {% for notif in notifs %}
-    <div class="notif">
+    <div class="notif {{ class }}">
     {% if notif.fromuser == request.session.login_id %}
     <img src="/media/{{ notif.to_user_profileimg }}" />
         {% if notif.is_accepted %}
