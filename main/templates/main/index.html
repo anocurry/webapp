@@ -49,13 +49,13 @@ body {
 <div class="overlay">
   <div class="overlay-black"></div>
     <div class="content animated fadeInUp">
-      <div class="mainbox">
-        <h1 class="maintitle">Cobweb</h1>
-        <p>Connect with others through your many web accounts.</p>
-      </div>
       {% if request.session.loggedin %}
         {% include 'main/loggedinbox.html' %}
       {% else %}
+        <div class="mainbox">
+          <h1 class="maintitle">Cobweb</h1>
+          <p>Connect with others through your many web accounts.</p>
+        </div>
       <div class="mainbox">
         <!-- duplicated codes-->
           <form action="{% url 'main:newuser' %}" method="post">

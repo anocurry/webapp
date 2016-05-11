@@ -9,6 +9,8 @@ from PIL import Image
 from django.core.files import File
 import os
 
+import json
+
 from .models import User, Post, Connection, Notification
 from .forms import PostForm, AccountForm
 
@@ -87,20 +89,31 @@ def sitenamefind(request):
 def sitenamelist(request):
     sitename = request.GET['sitename']
     sitenamelist = []
-    optionlist = []
+    optionlist = {}
+    counter = 0
     if sitename != '':
         posts = Post.objects.filter(sitename__contains=sitename)
         for p in posts:
             if p.sitename.lower() not in sitenamelist:
                 sitenamelist.append(p.sitename.lower())
                 count = Post.objects.filter(sitename__iexact=p.sitename).count()
+                optionlist[counter] = {
+                    'sitename': p.sitename.lower(),
+                    'count': count,
+                }
+                counter += 1
                 #optionlist.append('<option label="'+str(count)+' users">' + p.sitename.lower() +'</option>')
-                optionlist.append('<option>' + p.sitename.lower() +'</option>')
+                #optionlist.append('<option>' + p.sitename.lower() +'</option>')
                 #optionlist.append(p.sitename.lower())
-        if (len(optionlist) > 7): #suggest only 7 items max...
-            optionlist = optionlist[:7]
-    #print(optionlist)
-    return HttpResponse(optionlist)
+        if (len(optionlist) > 6): #suggest only 6 items max...
+            slicedoptionlist = {}
+            for i in range(0, 6):
+                slicedoptionlist[i] = optionlist[i]
+                #optionlist = optionlist[:7]
+            optionlist = slicedoptionlist
+    print(optionlist)
+    print(json.dumps(optionlist));
+    return HttpResponse(json.dumps(optionlist), content_type='application/json')
 
 
 def getLoggedInUser(request):

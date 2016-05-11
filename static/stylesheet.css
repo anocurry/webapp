@@ -479,6 +479,32 @@ th {
 	text-align:left;
 }
 
+.sitename-selection {
+	width:99%;
+	position:absolute;
+	background-color:#fff;
+	font-size:0.8em;
+	line-height:1em;
+	padding:5px;
+	display:block;
+	z-index:15;
+	text-align:right;
+	color:#ababab;
+	border-left:1px solid #ababab;
+	border-right:1px solid #ababab;
+}
+
+.sitename-selection span {
+	color:#000;
+	float:left;
+}
+
+.sitename-selection:hover {
+	color:#000;
+	background-color:#50d4d9;
+	cursor:pointer;
+}
+
 #theform input:not([type="radio"]), .styledform input:not([type="radio"]) {
 	width:100%;
 	border:0px;

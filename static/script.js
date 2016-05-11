@@ -144,34 +144,90 @@ $(document).ready(function() {
 
     initsitename();
     function initsitename() {
-      $('#id_sitename').change(function() {
-        var sitename = $(this).val();
-        $.ajax({
-            url: '/user/sitenamefind/',
-            type: 'get',
-  				  data: {'sitename': sitename},
-            success: function(data) {
-              $('#sitename-find').html(data);
-            },
-            failure: function(data) {
-                alert('Got an error dude');
-            }
-        });
+      //create an empty div element in the td
+      $('#id_sitename').parent().append("<div></div>");
+      var sitenamelist = $('#id_sitename').parent().find('div');
+      sitenamelist.attr('id', 'sitename-list');
+
+      $('#id_sitename').focusout(function() {
+        initsitename_find();
+        if (!resultsSelected) {  //if you click on anything other than the results
+            $("#sitename-list").hide();  //hide the results
+          }
       })
+
+      $('#id_sitename').focus(function() {
+        $('#sitename-list').show();
+      })
+
+      //this is for the dropdown list
       $('#id_sitename').keyup(function() {
-        var sitename = $(this).val();
+        var sitename = $('#id_sitename').val();
+        $('#id_sitename').parent().css('position', 'relative');
+        var offset = $('#id_sitename').parent().height();
         $.ajax({
             url: '/user/sitenamelist/',
             type: 'get',
             data: {'sitename': sitename},
             success: function(data) {
-              $('#sitenamelist').html(data);
+
+              var sitenamelist = $('#sitename-list');
+              sitenamelist.html(''); //clear the list first
+
+              $.each(data, function(key, value) {
+                if (value.count == 1)
+                {
+                   sitenamelist.append("<div><span>"+value.sitename+"</span>"+value.count+" user</div>");
+                 } else {
+                   sitenamelist.append("<div><span>"+value.sitename+"</span>"+value.count+" users</div>");
+                 }
+
+                var div = sitenamelist.find('div').last();
+                div.addClass('sitename-selection');
+                div.css('top', offset);
+                offset += div.outerHeight();
+              })
+              var lastdiv = sitenamelist.find('div').last();
+              lastdiv.css('border-bottom', '1px solid #ababab');
+              lastdiv.css('border-radius', '0px 0px 5px 5px');
+              initsitename_selection();
+
             },
             failure: function(data) {
                 alert('Got an error dude');
             }
         });
       })
+
+      $('#sitename-list').hover(function() {
+        resultsSelected = true;
+      }, function() {
+        resultsSelected = false;
+      })
+    }
+
+    function initsitename_selection() {
+      $('.sitename-selection').click(function() {
+        $('#id_sitename').val($(this).find('span').html())
+        $('#sitename-list').hide();
+        initsitename_find();
+      })
+    }
+
+    function initsitename_find() {
+      var sitename = $('#id_sitename').val();
+      var offset = $('#id_sitename').parent().height();
+      $.ajax({
+          url: '/user/sitenamefind/',
+          type: 'get',
+          data: {'sitename': sitename},
+          success: function(data) {
+            $('#sitename-find').html(data);
+          },
+          failure: function(data) {
+              alert('Got an error dude');
+          }
+      });
     }
 
     $('#bgimginput').change(function() {

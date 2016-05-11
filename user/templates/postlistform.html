@@ -11,7 +11,6 @@
       <form action="{% url 'user:newpost' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div id="theform"><table id="postform">{{ form.as_table }}</table></div>
-        <datalist id="sitenamelist"></datalist>
         <span id="sitename-find"></span>
         <center><button class="fa fa-check-circle fa-3x submitbutton hvr-grow" type="submit"></button></center>
       </form>
