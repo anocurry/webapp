@@ -4,7 +4,7 @@
 {% if request.session.login_id %}
   <div class="header-leftbar">
     <img src="/media/{{ user.profileImg }}" class="profileImg">
-    <span class="greeting">Hi, <a href="{% url 'user:index' %}">{{ user.username }}</a></span><br/>
+    <span class="greeting">Hi, <a href="{% url 'user:index' %}">{{ user.displayname }}</a></span><br/>
     <span class="header-links">
     <a href="{% url 'main:index' %}" class="hvr-grow">Home <i class="fa fa-home" aria-hidden="true"></i></a>
     <a href="{% url 'user:notifications' %}" class="hvr-grow link-margin-left">Notifications <i class="fa fa-envelope" aria-hidden="true"></i> {% if notifNum != 0 %}{{ notifNum }}{% endif %}</a>

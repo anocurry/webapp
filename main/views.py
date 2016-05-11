@@ -14,12 +14,13 @@ from .forms import RegisterForm, LoginForm, ResetForm, NewPasswordForm
 # Create your views here.
 def index(request):
     template = loader.get_template('main/index.html')
+    form = RegisterForm()
     try:
         u = user.views.getLoggedInUser(request)
     except User.DoesNotExist:
         return HttpResponse(template.render({}, request))
     notifNum = user.views.getUnreadNotifNum(request)
-    return HttpResponse(template.render({'user': u, 'notifNum': notifNum}, request))
+    return HttpResponse(template.render({'user': u, 'notifNum': notifNum, 'form': form}, request))
 
 
 def register(request):

@@ -1,8 +1,6 @@
-@import url(http://fonts.googleapis.com/css?family=Lato);
-@import url(http://fonts.googleapis.com/css?family=Bitter:400,700);
-@import url(https://fonts.googleapis.com/css?family=Raleway);
 @import url(https://fonts.googleapis.com/css?family=Oxygen:300);
 @import url(https://fonts.googleapis.com/css?family=Oswald:300);
+@import url(https://fonts.googleapis.com/css?family=Lobster+Two:400);
 
 *, *:after, *:before { -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
 
@@ -55,9 +53,6 @@ a:hover {
 	min-height:90px;
 	position:relative;
 	overflow:hidden;
-}
-
-.header .headertitle {
 }
 
 .header-links {
@@ -183,11 +178,29 @@ a:hover {
 }
 
 .mainbox {
+	width:80%;
 	text-align:center;
 	display:block;
-	margin-bottom:80px;
-	padding-bottom:20px;
+	margin-left:auto;
+	margin-right:auto;
+	margin-bottom:20px;
+	padding-bottom:0px;
 	border-bottom:1px solid #777;
+	color: #fff;
+}
+
+.maintitle {
+	font-family: 'Lobster Two', cursive, sans-serif;
+  text-shadow: 3px 3px rgba(200,200,200,0.2);
+	line-height:1em;
+}
+
+.mainbox .submitbutton {
+	color:#50d4d9;
+}
+
+.mainbox .submitbutton:hover, .mainbox a:hover {
+	color:#fff;
 }
 
 .leftbox {
@@ -212,6 +225,7 @@ a:hover {
 	padding:30px 50px;
 	line-height:1em;
 	margin-bottom:50px;
+	text-align: left;
 }
 
 .loggedinbox img {
@@ -920,6 +934,18 @@ th {
 		padding: 0px 10px;
 	}
 
+	.loggedinbox {
+		text-align:center;
+		line-height:1em;
+	}
+
+	.loggedinbox img {
+		float:none;
+		margin-bottom:10px;
+		height:90px;
+		width:90px;
+	}
+
 	.realcontent {
 		padding:20px 20px;
 	}
@@ -961,6 +987,10 @@ th {
 		width:100%;
 		margin-left:0px;
 		margin-right:0px;
+	}
+
+	.mainbox {
+		width:100%;
 	}
 
 	.content {
