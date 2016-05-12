@@ -45,8 +45,8 @@ $(document).ready(function() {
              $('.postformheader h1').html("Edit account information");
              $('#id_postid').parent().parent().hide();
              $('#overlay').fadeIn(500);
-             $('.postform').removeClass('animated bounceOut');
-             $('.postform').addClass('animated bounceIn');
+             $('.postform').removeClass('animated fadeOutDown');
+             $('.postform').addClass('animated fadeInUp');
              initsitename();
          },
          failure: function(data) {
@@ -66,8 +66,8 @@ $(document).ready(function() {
              $('.postformheader h1').html("Add account information");
              $('#id_postid').parent().parent().hide();
              $('#overlay').fadeIn(500);
-             $('.postform').removeClass('animated bounceOut');
-             $('.postform').addClass('animated bounceIn');
+             $('.postform').removeClass('animated fadeOutDown');
+             $('.postform').addClass('animated fadeInUp');
              initsitename();
          },
          failure: function(data) {
@@ -79,8 +79,8 @@ $(document).ready(function() {
    $('#closebutton').click(function() {
      $('#overlay').fadeOut(500);
      $('.error-message').hide();
-     $('.postform').removeClass('animated bounceIn');
-     $('.postform').addClass('animated bounceOut');
+     $('.postform').removeClass('animated fadeInUp');
+     $('.postform').addClass('animated fadeOutDown');
      $('#sitename-find').html('');
    })
 

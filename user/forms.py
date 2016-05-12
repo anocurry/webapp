@@ -49,7 +49,7 @@ class AccountForm_2(forms.Form):
     useBg = forms.CharField(max_length=50)
 """
 class AccountForm(ModelForm):
-    password = forms.CharField(max_length=50, widget=forms.PasswordInput())
+    password = forms.CharField(max_length=50, widget=forms.PasswordInput(), label='Password (required)')
     new_password = forms.CharField(max_length=50, required=False, widget=forms.PasswordInput())
     class Meta:
         model = User

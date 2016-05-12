@@ -16,6 +16,12 @@ from .forms import PostForm, AccountForm
 
 
 # Create your views here.
+
+"""
+    --- index(request) ---
+    Returns a HttpResponse to display the user's profile.
+    If the user is not logged in, the user is redirected to the application main page.
+"""
 def index(request):
     #display the logged in user here
     u = getLoggedInUser(request)
@@ -28,6 +34,17 @@ def index(request):
     template = loader.get_template('user/index.html')
     return HttpResponse(template.render({'user': u, 'form': form, 'notifNum': notifNum, 'ownprofile': True, 'posts': posts}, request))
 
+
+"""
+    --- getSortedUserPosts(user_id, ownprofile, connected) ---
+    Returns a series of posts, sorted by their usage (most used, moderately used, least user, on hiatus)
+    Used in index (user's own profile) and search pages.
+
+    Parameters:
+        ownprofile  : True if the user is viewing their own profile. False otherwise.
+        connected   : True if the user is viewing a connected user. False otherwise.
+    (See also: models.py in users)
+"""
 def getSortedUserPosts(user_id, ownprofile, connected):
     try:
         u = User.objects.get(id=user_id)
@@ -58,17 +75,43 @@ def getSortedUserPosts(user_id, ownprofile, connected):
     print(posts)
     return posts
 
+
+"""
+    --- newpostform(request) ---
+    Returns a HTML page that displays a PostForm.
+    Used when the user is displaying their own profile and has selected 'Add a new account'
+    Called using AJAX.
+    (See also: forms.py)
+"""
 def newpostform(request):
     form = PostForm()
     template = loader.get_template('user/postform.html')
     return HttpResponse(template.render({'form': form,}, request))
 
+
+"""
+    --- newpostformid(request, post_id) ---
+    Returns a HTML page that displays a PostForm, based on the post_id.
+    Used when the user is displaying their own profile and has selected the edit button under one of the posts they have.
+    Called using AJAX.
+    (See also: forms.py)
+
+    Parameters:
+        post_id : id of the targeted post. Passed when the user clicks on the edit button.
+"""
 def newpostformid(request, post_id):
     p = Post.objects.get(id=post_id)
     form = PostForm(instance=p)
     template = loader.get_template('user/postform.html')
     return HttpResponse(template.render({'form': form,}, request))
 
+
+"""
+    --- sitenamefind(request) ---
+    Returns a HTML page that displays connected users who have posts with the same sitenames as the user's input. The page is rendered and displayed within the PostForm.
+    Returns nothing if there is no connected users who have such posts.
+    Called using AJAX whenever the input field of sitename is no longer in focus.
+"""
 def sitenamefind(request):
     sitename = request.GET['sitename']
     connected_users = getConnectedUsers(request.session['login_id'])
@@ -86,6 +129,27 @@ def sitenamefind(request):
     count = count - 5
     return HttpResponse(template.render({'connectedusers': have_sameposts, 'count': count,'sitename': sitename }, request))
 
+
+"""
+    --- sitenamelist(request) ---
+    Returns a series of JSON objects to be used as drop down suggestions when the user is inputting the site name while adding or editing a post. At most 6 items are returned.
+    The JSON objects are in the form of a dictionary with their index as the key and { sitename, count } as values.
+        sitename    : (case-insensitive) the sitename that contains the characters in the user's input. This value is obtained from the database by checking what sitenames are used by other users.
+        count       : the number of users using this sitename in their posts.
+    The JSON format is as follows:
+    {
+        0 {
+            sitename    : xxx;
+            count       : ###;
+        }
+        1 {
+            sitename    : xxx;
+            count       : ###;
+        }
+        ...
+    }
+    Called using AJAX whenever there is a keyup event.
+"""
 def sitenamelist(request):
     sitename = request.GET['sitename']
     sitenamelist = []
@@ -115,7 +179,11 @@ def sitenamelist(request):
     print(json.dumps(optionlist));
     return HttpResponse(json.dumps(optionlist), content_type='application/json')
 
-
+"""
+    --- getLoggedInUser(request) ---
+    Returns the logged in User object.
+    Returns None if the user is not logged in.
+"""
 def getLoggedInUser(request):
     uid = request.session.get('login_id')
     try:
@@ -124,6 +192,14 @@ def getLoggedInUser(request):
         return None
     return u
 
+"""
+    --- search(request, user_id) ---
+    Returns a HTML page that displays the profile of the user, corresponding to the user_id.
+    The page is displayed differently for the user's own profile, a connected user and a non-connected user.
+
+    Parameters:
+        user_id : the id of the user to be searched.
+"""
 def search(request, user_id):
     try:
         searcheduser = User.objects.get(id=user_id)
@@ -150,6 +226,16 @@ def search(request, user_id):
     posts = getSortedUserPosts(user_id, ownprofile, connected)
     return HttpResponse(template.render({'user': u, 'notifNum': notifNum, 'searcheduser': searcheduser, 'ownprofile': ownprofile, 'form': form, 'connected': connected, 'notif': n, 'posts': posts, }, request))
 
+
+"""
+    --- searchuser(request) ---
+    Handles the searching request when the user enters a username to be searched.
+    Calls search() which returns the HTML page displaying the profile of the user if such user exists.
+    Otherwise, returns a HTML page showing that the searched username could not be found.
+
+    Parameters:
+        user_id : the id of the user to be searched.
+"""
 def searchuser(request):
     u = getLoggedInUser(request)
     notifNum = getUnreadNotifNum(request)
@@ -166,6 +252,11 @@ def viewaspublic(request):
 def viewasconnected(request):
     return viewasdetails(request, True)
 
+"""
+    --- viewasdetails(request, connected) ---
+    Called by viewaspublic and viewasconnected to enable the user to view as public and view as a connected user respectively.
+    Returns a HTML page displaying the user's profile. The same HTML page as search() is used.
+"""
 def viewasdetails(request, connected):
     searcheduser = getLoggedInUser(request)
     notifNum = getUnreadNotifNum(request)
@@ -175,6 +266,11 @@ def viewasdetails(request, connected):
     return HttpResponse(template.render({'user': searcheduser, 'notifNum': notifNum, 'searcheduser': searcheduser, 'ownprofile': False, 'connected': connected, 'notif': n, 'posts': posts, 'viewas': True }, request))
 
 
+"""
+    --- settings(request) ---
+    Returns a HTML page of the settings page that enables the user to edit their account information. AccountForm is used.
+    (See also: forms.py)
+"""
 def settings(request):
     try:
         uid = request.session.get('login_id')
@@ -188,6 +284,17 @@ def settings(request):
     template = loader.get_template('user/settings.html')
     return HttpResponse(template.render({'form': form, 'user': u, 'notifNum': notifNum, 'message': message}, request))
 
+
+"""
+    --- getMessage(request, sessionName, successMessage) ---
+    This function is used in order to display success messages when HttpResponseRedirect() is used.
+    Returns the successMessage passed in if the sessionName is a valid session variable. Otherwise, None is returned.
+    At the end of this function, the session variable is ensured to be set to False.
+
+    Parameters:
+        sessionName     : the name of the session variable that determines whether the message should be displayed.
+        successMessage  : the message to be displayed should the session variable is valid.
+"""
 def getMessage(request, sessionName, successMessage):
     if get_sessionSuccess(request, sessionName):
         message = successMessage
@@ -196,6 +303,15 @@ def getMessage(request, sessionName, successMessage):
         message = None
     return message
 
+
+"""
+    --- get_sessionSuccess(request, name) ---
+    Checks whether the session variable is True or False.
+    Handles the KeyError exception by returning False if the session variable is not set.
+
+    Parameters:
+        name    : name of the session variable to be checked against.
+"""
 def get_sessionSuccess(request, name):
     try:
         result = request.session[name]
@@ -203,6 +319,11 @@ def get_sessionSuccess(request, name):
         result = False
     return result
 
+
+"""
+    --- customize(request) ---
+    Returns a HTML page that displays the customization page, for the user to change their profile image and header image.
+"""
 def customize(request):
     try:
         uid = request.session.get('login_id')
@@ -216,6 +337,12 @@ def customize(request):
     template = loader.get_template('user/customize.html')
     return HttpResponse(template.render({'user': u, 'notifNum': notifNum, 'message': message}, request))
 
+
+"""
+    --- editsettings(request) ---
+    Handles the editing when the user submits the AccountForm in the settings page.
+    Returns a HTML page that displays the settings page and the return message (whether the user's information is successfully updated or an error has occurred).
+"""
 def editsettings(request):
     #do checking for password first...
     u = getLoggedInUser(request)
@@ -261,6 +388,13 @@ def editsettings(request):
         'notifNum': notifNum,
     })
 
+
+"""
+    --- editsettings(request) ---
+    Handles the editing when the user changes their profile image.
+    The image is cropped into a square using the either the width or height of the original image, whichever is smaller.
+    Returns a HTML page that displays the customization page.
+"""
 def editprofileimg(request):
     u = getLoggedInUser(request)
     if (bool(request.FILES)):
@@ -285,6 +419,12 @@ def editprofileimg(request):
         'error_message': "Something went wrong. Please try again.",
     })
 
+
+"""
+    --- editbgimg(request) ---
+    Handles the editing when the user changes their header image.
+    Returns a HTML page that displays the customization page.
+"""
 def editbgimg(request):
     u = getLoggedInUser(request)
     if (bool(request.FILES)):
@@ -299,6 +439,10 @@ def editbgimg(request):
     })
 
 
+"""
+    --- notifications(request) ---
+    Returns a HTML page that displays the notification page. Displays the unread and read notifications differently.
+"""
 def notifications(request):
     u = getLoggedInUser(request)
     readnotifs = Notification.objects.filter(Q(fromuser=u.id) & Q(is_accepted=True) & Q(is_read=True) | Q(touser=u.id) & Q(is_read=True)).order_by('-notif_date')
@@ -307,6 +451,12 @@ def notifications(request):
     template = loader.get_template('user/notifications.html')
     return HttpResponse(template.render({'user': u, 'readnotifs': readnotifs, 'toread': toread,'notifNum': notifNum}, request))
 
+
+"""
+    --- readnotifs(request) ---
+    Sets the is_read attribute of the user's unread notifications to True.
+    This function is called using AJAX within the notification page.
+"""
 def readnotifs(request):
     u = getLoggedInUser(request)
     toread = Notification.objects.filter(Q(fromuser=u.id) & Q(is_accepted=True) & Q(is_read=False) | Q(touser=u.id) & Q(is_accepted=False) & Q(is_read=False))
@@ -315,12 +465,24 @@ def readnotifs(request):
         n.save()
     return HttpResponse("Notifications have been read")
 
+
+"""
+    --- getUnreadNotifNum(request) ---
+    Get the number of unread notifications to be displayed in the header of each page.
+"""
 def getUnreadNotifNum(request):
     u = getLoggedInUser(request)
     if u:
         num = Notification.objects.filter(Q(fromuser=u.id) & Q(is_accepted=True) & Q(is_read=False) |  Q(touser=u.id) & Q(is_accepted=False) & Q(is_read=False)).count()
         return num
 
+
+"""
+    --- newpost(request) ---
+    Handles both adding and editing the user's post. If the user chooses to add a new account, a new post is created. Otherwise, if the user chooses to edit an existing account, the targeted post is edited.
+    Returns a HttpResponseRedirect to redirect the user to index page when the post has been successfully added or edited.
+    Returns a HttpResponse that displays the index page if there is an error message.
+"""
 def newpost(request):
     u = getLoggedInUser(request)
     posts = getSortedUserPosts(u.id, True, True)
@@ -387,6 +549,13 @@ def newpost(request):
                 'posts': posts,
             })
 
+
+"""
+    --- deletepost(request) ---
+    Handles the user's request to delete an existing post.
+    Returns a HttpResponseRedirect to redirect the user to index page when the post has been successfully added or edited.
+    Returns a HttpResponse that displays the index page if there is an error message.
+"""
 def deletepost(request):
     if request.POST['deletepostid']:
         try:
@@ -398,13 +567,30 @@ def deletepost(request):
         p.delete()
         return HttpResponseRedirect(reverse('user:index'))
 
+
+"""
+    --- newnotif(request, user_id) ---
+    Creates a new notification (connection request) to the targeted user with id = user_id
+    Used when the user selects '+ Connect' on the targeted user's profile page.
+    Returns a HttpResponseRedirect to redirect the user to the searched user's profile.
+
+    Parameters:
+        user_id : id of the targeted user to send notification to.
+"""
 def newnotif(request, user_id):
     uid = request.session.get('login_id')
     n=Notification(fromuser=uid, touser=user_id, message='test', notif_date=datetime.datetime.now())
     n.save()
     return HttpResponseRedirect(reverse('user:search', args=(user_id,)))
 
+"""
+    --- cancelnotif(request, user_id) ---
+    Deletes a notification (connection request) sent to the targeted user with id = user_id
+    Returns a HttpResponseRedirect to redirect the user to the searched user's profile.
 
+    Parameters:
+        user_id : id of the targeted user whose notification is to be deleted.
+"""
 def cancelnotif(request, user_id):
     uid = request.session.get('login_id')
     try:
@@ -414,6 +600,11 @@ def cancelnotif(request, user_id):
     n.delete()
     return HttpResponseRedirect(reverse('user:search', args=(user_id,)))
 
+
+"""
+    --- connections(request) ---
+    Returns a HTML page that displays the connections page. Displays each users together with the posts that have the same sitename as the user's posts.
+"""
 def connections(request):
     u = getLoggedInUser(request)
     notifNum = getUnreadNotifNum(request)
@@ -443,6 +634,11 @@ def connections(request):
         })
     return HttpResponse(template.render({'user': u, 'notifNum': notifNum, 'connectedusers': connectedusers}, request))
 
+
+"""
+    --- getConnectedUsers(user_id) ---
+    Returns an array of User objects that are connected with the user.
+"""
 def getConnectedUsers(user_id):
     connections = Connection.objects.filter(Q(fromuser=user_id) | Q(touser=user_id))
     if (not bool(connections)): #if there's no connections, return none...
@@ -457,6 +653,14 @@ def getConnectedUsers(user_id):
     return connectedusers
 
 
+"""
+    --- newconnect(request, user_id) ---
+    Establishes a connection between the user and the targeted user by creating a new connection object in te database. Used when the user selects 'Accept request'.
+    Returns a HttpResponseRedirect to redirect the user to the searched user's profile.
+
+    Parameters:
+        user_id : id of the targeted user who is to be connected with the user.
+"""
 def newconnect(request, user_id):
     uid = request.session.get('login_id')
     c = isConnected(request, user_id)
@@ -474,6 +678,14 @@ def newconnect(request, user_id):
     return HttpResponseRedirect(reverse('user:search', args=(user_id,)))
 
 
+"""
+    --- disconnect(request, user_id) ---
+    Deletes the connection established between the user and the targeted user by deleting the connection object in te database. Used when the user selects 'Disconnect'
+    Returns a HttpResponseRedirect to redirect the user to the searched user's profile.
+
+    Parameters:
+        user_id : id of the targeted user who is to be disconnected with the user.
+"""
 def disconnect(request, user_id):
     uid = request.session.get('login_id')
     c = isConnected(request, user_id)
@@ -484,6 +696,13 @@ def disconnect(request, user_id):
     return HttpResponseRedirect(reverse('user:search', args=(user_id,)))
 
 
+"""
+    --- isConnected(request, user_id) ---
+    Returns a Connection object if the user is connected with the targeted user. Otherwise, None is returned.
+
+    Parameters:
+        user_id : id of the targeted user who is to be checked if they are connected with the user.
+"""
 def isConnected(request, user_id):
     uid = request.session.get('login_id')
     try:
@@ -492,6 +711,14 @@ def isConnected(request, user_id):
         return None
     return c
 
+
+"""
+    --- findNotif(request, user_id) ---
+    Returns an integer to check if there is any notification sent to or received from the targeted user, to render the targeted user's profile differently.
+
+    Parameters:
+        user_id : id of the searched user.
+"""
 def findNotif(request, user_id):
     uid = request.session.get('login_id')
     try:
@@ -507,6 +734,11 @@ def findNotif(request, user_id):
             #display as 'send connection' or something
             return 0
 
+
+"""
+    --- custom(request) ---
+    Returns a HTML page that allows the user to create custom widgets.
+"""
 def custom(request):
     try:
         uid = request.session.get('login_id')
@@ -519,6 +751,11 @@ def custom(request):
     template = loader.get_template('user/custom.html')
     return HttpResponse(template.render({'posts': posts, 'user': u, 'notifNum': notifNum,}, request))
 
+"""
+    --- custom(request) ---
+    Returns a HTML page that renders the custom widgets based on the user's request.
+    Called using AJAX when the user submits the form in custom.html.
+"""
 def customsubmit(request):
     print("### PRINTING CUSTOM SUBMIT ### ")
     posts = []
@@ -530,6 +767,10 @@ def customsubmit(request):
     return HttpResponse(template.render({'posts': posts, }, request))
 
 
+"""
+    --- logout(request) ---
+    Logs out the user and redirects the user to the index page of the application.
+"""
 def logout(request):
     try:
         del request.session['login_id']
