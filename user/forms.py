@@ -31,7 +31,7 @@ class PostForm(ModelForm):
             'vis' : 'Visibility',
         }
         widgets = {
-            'sitename': forms.TextInput(attrs={'list': 'sitenamelist', 'autocomplete': 'on'}),
+            'sitename': forms.TextInput(attrs={'list': 'sitenamelist', 'autocomplete': 'off'}),
             'vis': forms.RadioSelect(attrs={'class': 'radiobutton'}),
             'usage': forms.RadioSelect(attrs={'class': 'radiobutton'}),
         }

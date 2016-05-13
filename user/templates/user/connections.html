@@ -17,7 +17,7 @@
     <p>Both of you have accounts on:
     <br/><br/>
     {% for p in c.connecteduser_sameposts %}
-      {% if p.has_url %}<a href="{{ p.url }}">{% endif %}
+      {% if p.has_url %}<a href="{{ p.url }}" target="_blank">{% endif %}
         <img src="/media/{{ p.logo }}" class="connectionlogo hvr-grow"/>
       {% if p.has_url %}</a>{% endif %}
     {% endfor %}
