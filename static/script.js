@@ -3,6 +3,7 @@ $(document).ready(function() {
   //Initialization
   new WOW().init();
   $('#id_postid').parent().parent().hide();
+  initPostForm_closebutton();
 
   function animationHover(element, animation) {
    element = $(element);
@@ -32,6 +33,26 @@ $(document).ready(function() {
         });
     };
 
+    function openPostForm() {
+        $('#overlay').fadeIn(500);
+        $('.postform').removeClass('animated fadeOutDown');
+        $('.postform').addClass('animated fadeInUp');
+    }
+
+    function initPostForm_closebutton() {
+      $('#closebutton').click(function() {
+        closePostForm();
+        $('#sitename-find').html('');
+      })
+    }
+
+    function closePostForm() {
+      $('#overlay').fadeOut(500);
+      $('.error-message').hide();
+      $('.postform').removeClass('animated fadeInUp');
+      $('.postform').addClass('animated fadeOutDown');
+    }
+
    $('.editpostbutton').click(function() {
      //alert("clicked " + $(this).attr('id'));
      postid = $(this).attr('id');
@@ -44,9 +65,7 @@ $(document).ready(function() {
              $('#id_postid').val(postid);
              $('.postformheader h1').html("Edit account information");
              $('#id_postid').parent().parent().hide();
-             $('#overlay').fadeIn(500);
-             $('.postform').removeClass('animated fadeOutDown');
-             $('.postform').addClass('animated fadeInUp');
+             openPostForm();
              initsitename();
          },
          failure: function(data) {
@@ -65,9 +84,7 @@ $(document).ready(function() {
              $('#id_postid').val('');
              $('.postformheader h1').html("Add account information");
              $('#id_postid').parent().parent().hide();
-             $('#overlay').fadeIn(500);
-             $('.postform').removeClass('animated fadeOutDown');
-             $('.postform').addClass('animated fadeInUp');
+             openPostForm();
              initsitename();
          },
          failure: function(data) {
@@ -75,14 +92,6 @@ $(document).ready(function() {
          }
      });
    });
-
-   $('#closebutton').click(function() {
-     $('#overlay').fadeOut(500);
-     $('.error-message').hide();
-     $('.postform').removeClass('animated fadeInUp');
-     $('.postform').addClass('animated fadeOutDown');
-     $('#sitename-find').html('');
-   })
 
    $('.deletepostbutton').click(function() {
     // alert($(this).parent().find('input[name="deletepostid"]').val());
@@ -306,5 +315,44 @@ $(document).ready(function() {
     $('#profileimginput').mouseleave(function() {
       $('.profileimginputdiv').css('background-color', 'transparent');
       $('.profileimginputicon').css('opacity', 0);
+    })
+
+    function connectionlogo_hovered(embed_a) {
+      var connectionlogo_hover = $(this).parent().find('.connectionlogo_hover');
+      connectionlogo_hover.hover(function() {
+        return true;
+      }, function() {
+        return false;
+      })
+    }
+
+    $('.embed_twitter').hover(function() {
+      var connectionlogo_hover = $(this).find('.connectionlogo-hover');
+      connectionlogo_hover.append("<button class='embed_button'>Latest tweet</button>");
+      var thenewbutton = connectionlogo_hover.find('.embed_button');
+
+      thenewbutton.click(function() {
+        embed_button = $(this);
+        var embed_loading = $(this).parent().parent().parent().find('.embed_loading');
+        var screen_name = $(this).parent().find('.embed_siteusername').html();
+        embed_loading.html('<br/><i class="fa fa-spinner fa-spin fa-fw" aria-hidden="true"></i> Fetching data from Twitter...');
+        $.ajax({
+            url: '/user/get_status_twitter',
+            type: 'get',
+            data: {'screen_name': screen_name},
+            success: function(data) {
+              //alert(data);
+              $('#embed_box').html(data);
+              embed_loading.html('');
+              openPostForm();
+            },
+            failure: function(data) {
+                alert('Got an error dude');
+            }
+        })
+      })
+    }, function() {
+        var embed_button = $(this).find('.embed_button');
+        embed_button.remove();
     })
  });

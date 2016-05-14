@@ -10,9 +10,16 @@ from django.core.files import File
 import os
 
 import json
+import tweepy
 
 from .models import User, Post, Connection, Notification
 from .forms import PostForm, AccountForm
+
+# constants
+TWITTER_CONSUMER_KEY = 'aoCzWfYt9aeqFItB90Z3QkIL6'
+TWITTER_CONSUMER_SECRET = 'iFf6MmOqphEN09OJcNFKCtkjwTdQgLhyGYTqd6VsGV1d0EW4Ml'
+TWITTER_ACCESS_TOKEN = '3252758018-IrW0i6FJf12okDP7xsrIJShgBrce5dnq0dFOoR0'
+TWITTER_ACCESS_TOKEN_SECRET = 'MqkoHZjVwirgGLtsTVyx9FTROkpysc35T2zeZ0hGrRskk'
 
 
 # Create your views here.
@@ -633,6 +640,24 @@ def connections(request):
             'connecteduser_sameposts': sameposts,
         })
     return HttpResponse(template.render({'user': u, 'notifNum': notifNum, 'connectedusers': connectedusers}, request))
+
+def get_status_twitter(request):
+    auth = tweepy.OAuthHandler(TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET)
+    auth.set_access_token(TWITTER_ACCESS_TOKEN, TWITTER_ACCESS_TOKEN_SECRET)
+    api = tweepy.API(auth)
+    public_tweets = api.home_timeline()
+
+    screen_name = request.GET['screen_name']
+    t = None
+    error_message = ""
+    try:
+        t = api.user_timeline(screen_name)[0]
+    except (UnicodeEncodeError, tweepy.TweepError):
+        error_message = "Sorry, this account's tweets could not be retrieved."
+        pass
+
+    template = loader.get_template('embed/twitter.html')
+    return HttpResponse(template.render({'screen_name': screen_name, 'tweet': t, 'ownprofile': True, 'error_message': error_message}, request))
 
 
 """

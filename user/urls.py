@@ -25,6 +25,7 @@ urlpatterns = [
     url(r'^(?P<user_id>[0-9]+)/newnotif/$', views.newnotif, name='newnotif'),
     url(r'^(?P<user_id>[0-9]+)/cancelnotif/$', views.cancelnotif, name='cancelnotif'),
     url(r'^connections/$', views.connections, name='connections'),
+    url(r'^get_status_twitter/$', views.get_status_twitter, name='get_status_twitter'),
     url(r'^(?P<user_id>[0-9]+)/newconnect/$', views.newconnect, name='newconnect'),
     url(r'^(?P<user_id>[0-9]+)/disconnect/$', views.disconnect, name='disconnect'),
     url(r'^custom/$', views.custom, name='custom'),

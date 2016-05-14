@@ -1,19 +1,12 @@
-{% if ownprofile %}
-{% if error_message %}<div id="overlay">
-{% else %}<div id="overlay" class="hidden">
-{% endif %}
-  <div class="overlay-black"></div>
-  <div class="postform">
-      <div class="postformheader oswald-font"><h1>Add account information</h1>
-        <button id="closebutton">Close</button>
-      </div>
-      {% if error_message %}<p class="error-message">{{ error_message }}</p>{% endif %}
-      <form action="{% url 'user:newpost' %}" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div id="theform"><table id="postform">{{ form.as_table }}</table></div>
-        <span id="sitename-find"></span>
-        <center><button class="fa fa-check-circle fa-3x submitbutton hvr-grow" type="submit"></button></center>
-      </form>
-  </div>
-</div>
-{% endif %}
+{% extends 'postformlayout.html' %}
+
+{% block postformheader %}Add account information{% endblock %}
+
+{% block postformcontent %}
+<form action="{% url 'user:newpost' %}" method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div id="theform"><table id="postform">{{ form.as_table }}</table></div>
+  <span id="sitename-find"></span>
+  <center><button class="fa fa-check-circle fa-3x submitbutton hvr-grow" type="submit"></button></center>
+</form>
+{% endblock %}

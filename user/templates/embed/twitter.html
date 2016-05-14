@@ -1,0 +1,40 @@
+{% extends 'postformlayout.html' %}
+
+{% block js %}
+<script>
+$(document).ready(function() {
+    screen_name = "{{ screen_name }}";
+    tweet_id = "{{ tweet.id }}";
+    tweeturl = 'https://twitter.com/'+screen_name+'/status/'+tweet_id;
+    if (tweet_id != '') {
+      $.ajax({
+          url: 'https://publish.twitter.com/oembed?url=' + tweeturl,
+          type: 'get',
+          dataType: 'jsonp',
+          data: {'hide_media': 'true'},
+          success: function(data) {
+            //alert(data.html);
+            $('#postformembed').html(data.html);
+            $('#postformembed').append("<a href='http://www.twitter.com/{{ screen_name }}' class='oswald-font' target='_blank'>Go to {{ screen_name }}'s Twitter account</a>");
+            initPostForm_closebutton();
+          },
+          failure: function(data) {
+              alert('Got an error dude');
+          }
+      })
+    }
+    else {
+      $('#postformembed').html('');
+      initPostForm_closebutton();
+    }
+})
+</script>
+{% endblock %}
+
+{% block postformheader %}Latest tweet from {{ screen_name }}'s Twitter {% endblock %}
+
+{% block postformcontent %}
+<center>
+<div id="postformembed"><i class="fa fa-spinner fa-spin fa-fw" aria-hidden="true"></i>Loading data from Twitter...</div>
+</center>
+{% endblock %}

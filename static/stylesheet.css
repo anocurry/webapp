@@ -457,9 +457,13 @@ a .post-siteusername:hover {
 	text-decoration:underline;
 }
 
-.postform form {
+.postform form, .postform #postformembed {
 	width:100%;
 	padding:0px 20px 20px 20px;
+}
+
+#postformembed a {
+	font-size:1.2em;
 }
 
 .optiondiv {
@@ -629,14 +633,6 @@ th {
 	background-color:#000;
 	z-index:6;
 	opacity:0.5;
-}
-
-.hidden {
-	display:none;
-}
-
-.transparent {
-	opacity:0;
 }
 
 .error-message {
@@ -925,6 +921,50 @@ th {
 	width:30px;
 }
 
+.connection .connectionlogo-div {
+	position:relative;
+	display:inline-block;
+	margin:0px;
+}
+
+.connectionlogo-hover {
+	position:absolute;
+	top:20px;
+	left:20px;
+	background-color:rgba(0,0,0,0.7);
+	color:#fff;
+	padding:5px 5px;
+	z-index:5;
+	display:none;
+}
+
+.connectionlogo-hover span {
+	color:#fff;
+	display:block;
+}
+
+.connectionlogo-hover button {
+	border:0px;
+	color:#fff;
+	background-color:#50d4d9;
+	font-size:0.8em;
+	font-family: 'Oxygen', calibri, sans-serif;
+	white-space: nowrap;
+}
+
+.connectionlogo-hover button:hover {
+	background-color:orange;
+	cursor:pointer;
+}
+
+.connectionlogo-div:hover .connectionlogo-hover {
+	display:block;
+}
+
+.embed_loading {
+	font-size:0.7em;
+}
+
 .connection p {
 	font-size:0.8em;
 }
@@ -949,6 +989,18 @@ th {
 
 .viewas-footer a:hover {
 	color:#000;
+}
+
+.hidden {
+	display:none;
+}
+
+.hidden-impt {
+	display:none !important;
+}
+
+.transparent {
+	opacity:0;
 }
 
 /******* MEDIA QUERIES ******/

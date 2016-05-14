@@ -7,6 +7,7 @@
   <h1>Connections</h1>
   Connected users are able to see your public and reserved accounts.
   <br/><br/>
+  <div id="embed_box"></div>
 <div class="connectiondiv">
 {% for c in connectedusers %}
   <div class="connection">
@@ -17,10 +18,14 @@
     <p>Both of you have accounts on:
     <br/><br/>
     {% for p in c.connecteduser_sameposts %}
-      {% if p.has_url %}<a href="{{ p.url }}" target="_blank">{% endif %}
-        <img src="/media/{{ p.logo }}" class="connectionlogo hvr-grow"/>
-      {% if p.has_url %}</a>{% endif %}
+      <div class="connectionlogo-div embed_{{ p.sitename|lower }}">
+        {% if p.has_url %}<a href="{{ p.url }}" target="_blank">{% endif %}
+            <img src="/media/{{ p.logo }}" class="connectionlogo hvr-grow"/>
+        {% if p.has_url %}</a>{% endif %}
+        <div class="connectionlogo-hover"><span class="embed_siteusername">{{ p.siteusername }}</span></div>
+      </div>
     {% endfor %}
+    <div class="embed_loading"></div>
     </p>
     {% endif %}
   </div>
