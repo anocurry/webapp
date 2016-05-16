@@ -25,11 +25,11 @@ $.ajax({
   {% if toread or readnotifs %}
     {% if toread %}
       {% with notifs=toread class='toread' %}
-        {% include 'notifdetails.html' %}
+        {% include 'user/notifdetails.html' %}
       {% endwith %}
     {% endif %}
     {% with notifs=readnotifs class='readnotifs' %}
-      {% include 'notifdetails.html' %}
+      {% include 'user/notifdetails.html' %}
     {% endwith %}
   {% else %}
   <p class="message">You do not have any notifications yet.</p>

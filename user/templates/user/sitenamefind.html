@@ -1,3 +1,7 @@
+<!--
+This renders the request to display connected users who have are using the same site domains when the user enters a sitename on the add/edit account form. Requested using AJAX and rendered on postlistform as a small section
+-->
+
 {% if connectedusers %}
   {% for c in connectedusers %}
   <img src="/media/{{ c.profileImg }}"/>

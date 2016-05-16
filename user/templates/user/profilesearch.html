@@ -1,4 +1,9 @@
-{% include 'profiledetails.html '%}
+<!--
+This page is only used if the user searches for another user or chooses 'view as...'
+Handles the connection button to be displayed
+-->
+
+{% include 'user/profiledetails.html '%}
 
   {% if not ownprofile and request.session.loggedin %}
     {% if connected %}

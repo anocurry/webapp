@@ -6,22 +6,22 @@
 
     {% block css %}
     {% with searcheduser=user %}
-    {% include 'profilecss.html' %}
+    {% include 'user/profilecss.html' %}
     {% endwith %}
     {% endblock %}
 {% endif %}
 
-{% block outsidecontent %}{% include 'postlistform.html' %}{% endblock %}
+{% block outsidecontent %}{% include 'user/postlistform.html' %}{% endblock %}
 
 {% block content %}
   {% if user %}
     {% with searcheduser=user %}
-    {% include 'profiledetails.html '%}
+    {% include 'user/profiledetails.html '%}
     </div>
     {% endwith %}
     <div class="realcontent">
       {% with searcheduser=user %}
-      {% include 'postlist.html' %}
+      {% include 'user/postlist.html' %}
       {% endwith %}
     </div>
 

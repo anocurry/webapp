@@ -3,16 +3,16 @@
 {% block title %}{{ searcheduser.username }}'s profile {% endblock %}
 
 {% if ownprofile %}
-{% block outsidecontent %}{% include 'postlistform.html' %}{% endblock %}
+{% block outsidecontent %}{% include 'user/postlistform.html' %}{% endblock %}
 {% endif %}
 
 {% block css %}
-  {% include 'profilecss.html' %}
+  {% include 'user/profilecss.html' %}
 {% endblock %}
 
 {% block content %}
 
-    {% include 'profilesearch.html '%}
+    {% include 'user/profilesearch.html '%}
 
     <div class="realcontent">
     {% if not request.session.loggedin and searcheduser.vis == 0 %}
@@ -20,7 +20,7 @@
     {% elif not connected and searcheduser.vis == 0 %}
         This user's account is only visible to connected users.
     {% else %}
-      {% include 'postlist.html' %}
+      {% include 'user/postlist.html' %}
     {% endif %}
     </div>
 

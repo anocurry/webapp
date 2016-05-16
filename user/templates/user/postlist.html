@@ -1,16 +1,20 @@
+<!--
+This page handles sorting of the user's account by their usage
+-->
+
 <div class="postlist">
 {% if posts.mostUsed or posts.moderatelyUsed or posts.leastUsed or posts.onHiatus %}
 {% for post in posts.mostUsed %}
-  {% include 'postdetails.html' %}
+  {% include 'user/postdetails.html' %}
 {% endfor %}
 {% for post in posts.moderatelyUsed %}
-  {% include 'postdetails.html' %}
+  {% include 'user/postdetails.html' %}
 {% endfor %}
 {% for post in posts.leastUsed %}
-  {% include 'postdetails.html' %}
+  {% include 'user/postdetails.html' %}
 {% endfor %}
 {% for post in posts.onHiatus %}
-  {% include 'postdetails.html' %}
+  {% include 'user/postdetails.html' %}
 {% endfor %}
 {% else %}
   {% if ownprofile %}You have not added any accounts yet.
