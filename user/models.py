@@ -3,6 +3,22 @@ from django.utils import timezone
 import datetime
 
 # Create your models here.
+
+"""
+    User:
+    - Represents the accounts registered by the users within the application.
+
+    Attributes:
+    - username (unique)
+    - password
+    - email (unique)
+    - displayname (not unique)
+    - description
+    - vis (integer field - public/1 or private/0)
+    - profileImg
+    - bgImg
+    - useBg (unused attribute)
+"""
 class User(models.Model):
     VIS_CHOICES=(
         (1, 'Public'),
@@ -21,7 +37,22 @@ class User(models.Model):
     def __str__(self):
         return self.username
 
+"""
+    Post:
+    - Represents the accounts of other site domains added by the users into their profiles.
 
+    Attributes:
+    - user (reference to user's ID as foreign key)
+    - sitename (name of the site domain of the account added)
+    - siteusername (username used on that site domain)
+    - email (email used on that site domain - stored as a record of the user's login credential)
+    - url
+    - post_date (date of the latest update of the post)
+    - usage (integer field - Most used/3, Moderately used/2, Least used/1, On hiatus/0)
+    - description
+    - vis (integer field - public/2, reserved/1, private/0)
+    - logo
+"""
 class Post(models.Model):
     VIS_CHOICES=(
         (2, 'Public'),
@@ -64,6 +95,19 @@ class Post(models.Model):
         result = month + " " + day
         return result
 
+
+"""
+    Notification
+    - Generated when users send others a connection request or a connection request has been accepted.
+
+    Attributes:
+    - fromuser (id of the user who sent the connection request)
+    - touser (id of the user who received the connection request)
+    - is_read (boolean field)
+    - is_accepted (boolean field)
+    - notif_date (date of sending the connection request. This attribute is updated when the connection request is accepted. The new value is the date of which the request is accepted)
+    - message (unused attribute)
+"""
 class Notification(models.Model):
     fromuser = models.PositiveIntegerField()
     touser = models.PositiveIntegerField()
@@ -90,6 +134,15 @@ class Notification(models.Model):
         u = User.objects.get(id=self.touser)
         return u.profileImg
 
+
+"""
+    Connection
+    - Represents the establishment of connection between two users.
+
+    Attributes:
+    - fromuser (id of the user who sent the connection request)
+    - touser (id of the user who received and accepted the connection request)
+"""
 class Connection(models.Model):
     fromuser = models.PositiveIntegerField()
     touser = models.PositiveIntegerField()

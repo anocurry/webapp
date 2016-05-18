@@ -19,6 +19,13 @@ class PostForm_2(forms.Form):
     logo = forms.ImageField()
 """
 
+
+"""
+    PostForm
+    - Form used for both inserting and editing posts.
+    - Based on the Post object.
+    (See also: models.py)
+"""
 class PostForm(ModelForm):
     postid = forms.CharField(max_length=100)
     class Meta:
@@ -47,6 +54,13 @@ class AccountForm_2(forms.Form):
     profileImg = forms.ImageField() #change to imagefield?
     bgImg = forms.CharField(max_length=200)   #change to imagefield?
     useBg = forms.CharField(max_length=50)
+"""
+
+"""
+    AccountForm
+    - Form used for the settings page to edit the user's account settings.
+    - Based on the User object.
+    (See also: models.py)
 """
 class AccountForm(ModelForm):
     password = forms.CharField(max_length=50, widget=forms.PasswordInput(), label='Password (required)')
