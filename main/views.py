@@ -12,6 +12,11 @@ import user
 from .forms import RegisterForm, LoginForm, ResetForm, NewPasswordForm
 
 # Create your views here.
+
+"""
+    --- index(request) ---
+    Returns a HttpResponse to display the main page.
+"""
 def index(request):
     template = loader.get_template('main/index.html')
     form = RegisterForm()
@@ -22,7 +27,10 @@ def index(request):
     notifNum = user.views.getUnreadNotifNum(request)
     return HttpResponse(template.render({'user': u, 'notifNum': notifNum, 'form': form}, request))
 
-
+"""
+    --- register(request) ---
+    Returns a HttpResponse to display the registration page.
+"""
 def register(request):
     form = RegisterForm()
     try:
@@ -33,6 +41,12 @@ def register(request):
     #redirect if user is logged in
     return HttpResponseRedirect(reverse('user:index'))
 
+"""
+    --- newuser(request) ---
+    Handles the request to create a new user.
+    Redirects to the login page if a user is successfully created. The session variable 'register_success' is set to true.
+    Otherwise, returns a HttpResponse to direct the user to registration page.
+"""
 def newuser(request):
     form = RegisterForm(request.POST)
     if form.is_valid():
@@ -55,6 +69,11 @@ def newuser(request):
             'form': form,
         })
 
+
+"""
+    --- login(request) ---
+    Returns a HttpResponse to display the login page.
+"""
 def login(request):
     form = LoginForm()
     message = user.views.getMessage(request, 'register_success', "Your new account has been successfully created.")
@@ -65,6 +84,12 @@ def login(request):
     template = loader.get_template('main/login.html')
     return HttpResponse(template.render({'user': u, 'form': form, 'message': message}, request))
 
+"""
+    --- loginauth(request) ---
+    Handles the request to login. The input is compared against the usernames and emails in the database.
+    Redirects to user:index page if login is successful.
+    Otherwise, returns a HttpResponse to direct the user back to the login page.
+"""
 def loginauth(request):
     form = LoginForm(request.POST)
     if form.is_valid():
@@ -93,6 +118,10 @@ def loginauth(request):
             'form': form,
         })
 
+"""
+    --- reset(request) ---
+    Returns a HttpResponse to display the reset password page.
+"""
 def reset(request):
     form = ResetForm()
     try:
@@ -104,6 +133,12 @@ def reset(request):
     #redirect if user is logged in
     return HttpResponseRedirect(reverse('main:login'))
 
+
+"""
+    --- resetpassword(request) ---
+    Handles the request to reset the user's password. (** currently no token is generated **) Sends an email to the user containing a link to reset the password.
+    Directs the user back to reset password page after the request.
+"""
 def resetpassword(request):
     form = ResetForm(request.POST)
     if form.is_valid():
@@ -127,16 +162,32 @@ def resetpassword(request):
         template = loader.get_template('main/resetpassword.html')
         return HttpResponse(template.render({'error_message': 'Please fill up the form.', 'form': form,}, request))
 
+
+"""
+    --- resetmail(request) ---
+    Returns a HttpResponse that renders the email to be sent for password reset.
+"""
 def resetmail(user_id):
     u = User.objects.get(id=user_id)
     return loader.render_to_string('main/resetmail.html', {'user': u})
 
+
+"""
+    --- resetauth(request) ---
+    Returns a HttpResponse to display the page for user to change their password for password reset.
+"""
 def resetauth(request, user_id):
     u = User.objects.get(id=user_id)
     form = NewPasswordForm()
     template = loader.get_template('main/resetauth.html')
     return HttpResponse(template.render({'user': u, 'form': form}, request))
 
+"""
+    --- resetauthprocess(request) ---
+    Handles the request to change the user's password for password reset.
+    Returns a HttpResponseRedirect to redirect the user to the login page if the password reset was successful.
+    Otherwise, returns a HttpResponse to direct the user back to the change password page.
+"""
 def resetauthprocess(request, user_id):
     u = User.objects.get(id=user_id)
     form = NewPasswordForm(request.POST)
